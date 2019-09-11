@@ -87,6 +87,7 @@ def get_frequencyDict(ner_exs: List[PersonExample]):
         
     # for key, value in sorted(frequency_dict.items(), key=lambda item: item[1]):
     #     print("%s: %s" % (key, value))
+    #threshold is heuristically selected to be 40
 
     return frequency_dict, inverse_document_dict
 
@@ -105,6 +106,7 @@ def get_frequentNameDict(ner_exs: List[PersonExample]):
 
     # for key, value in sorted(frequentNameDict.items(), key=lambda item: item[1]):
     #     print("%s: %s" % (key, value))
+    #threshold is heuristically selected to be 15
 
     return frequentNameDict
     
@@ -124,6 +126,7 @@ def get_oneBeforeNameDict(ner_exs: List[PersonExample]):
 
     # for key, value in sorted(oneBeforeNameDict.items(), key=lambda item: item[1]):
     #     print("%s: %s" % (key, value))
+    #threshold is heuristically selected to be 18
 
     return oneBeforeNameDict
 
@@ -142,6 +145,7 @@ def get_twoBeforeNameDict(ner_exs: List[PersonExample]):
 
     # for key, value in sorted(twoBeforeNameDict.items(), key=lambda item: item[1]):
     #     print("%s: %s" % (key, value))
+    # threshold is heuristically selected to be 16
 
     return twoBeforeNameDict
 
