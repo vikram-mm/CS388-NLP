@@ -168,14 +168,30 @@ def get_oneAfterNameDict(ner_exs: List[PersonExample]):
 
     return oneAfterNameDict
 
+def get_posDict(ner_exs: List[PersonExample]):
+    pos_dict = {}
+    index = 0
+    for ex in ner_exs:
+        for i, pos in enumerate(ex.pos_tags):
+           if re.match('^[a-zA-Z][\w-]+$', pos.lower()):   #only words and not numbers, dates etc.
+
+                if pos.lower() not in pos_dict:
+                    pos_dict[pos.lower()] = index
+                    index += 1
+
+    total_posTags = index
+                
+    return pos_dict, index
+
+
 
 
 class Featurizer():
 
+
     def __init__(self, train_class_exs: List[PersonExample]):
         '''
-        computes the token level statistics of the train data, which will be used to computer
-        the features of the tokens
+        used to initiialize the featurizer and calculate various priors of the train set
         '''
         self.vocab_dict = generate_vocabDict(train_class_exs)
         self.frequencyDict, self.inverse_document_dict =  get_frequencyDict(train_class_exs)
@@ -183,101 +199,107 @@ class Featurizer():
         self.oneBeforeNameDict = get_oneBeforeNameDict(train_class_exs)
         self.twoBeforeNameDict = get_twoBeforeNameDict(train_class_exs)
         self.oneAfterNameDict = get_oneAfterNameDict(train_class_exs)
+        self.pos_dict, self.total_posTags = get_posDict(train_class_exs)
+
         self.vocab_size = len(self.vocab_dict)  
-        self.num_dimensions = 11 + 1 + 3*self.vocab_size + 1#plus one for bias, plus one for none of the words
-        self.num_direct_dimensions = 11 + 1 # 1 is bias
+        self.num_dimensions = 15 + 1 + 3*(self.vocab_size + 1) + 3*self.total_posTags #plus one for bias, plus 3 for none of the words
+        self.num_direct_dimensions = 15 + 1 # 1 is bias
+
+        #for tf-idf
+        self.total_frequencyDict = 0.0
+        for key, value in self.frequencyDict.items():
+            self.total_frequencyDict += value       
+        self.total_docs = len(train_class_exs)
+
+        #for frequency features
+        self.max_frequencyDict = max(self.frequencyDict.values())
+        self.max_frequentNameDict = max(self.frequentNameDict.values())
+        self.max_oneBeforeNameDict = max(self.oneBeforeNameDict.values())
+        self.max_twoBeforeNameDict = max(self.oneBeforeNameDict.values())
+        self.max_oneAfterNameDict = max(self.oneAfterNameDict.values())
+
+        print('vocabulary size: {}'.format(self.vocab_size))
+        print('number of pos tags: {}'.format(self.total_posTags))
+        print('number of dimensions: {}'.format(self.num_dimensions))
+        
+       
+
+
+
+    def get_tf_idf(self, token):
+
+        if token not in self.frequencyDict:
+            return 0
+        
+        tf = self.frequencyDict[token] /self.total_frequencyDict
+        idf = np.log(self.total_docs / self.inverse_document_dict[token])
+
+        return tf*idf
 
     
-    def featurize(self, tokens: List[str], frequency_threshold=40, frequentName_threshold = 15, oneBefore_threshold=18,\
-     twoBefore_threshold = 16, oneAfter_threshold=2):
-        
+    def featurize(self, tokens: List[str], pos_tags: List[str]):
         '''
-        the four dictionaries passed in the argument are generated only using the training data.
-        the thresholds were heuristically deterimined 
+        featurization over a list of tokens
         '''
 
-        #Feature dimensions:
-        # 1 -> is it the first word of the sentence? (0 or 1)
-        # 2 -> Does it start with a capital letter? (0 or 1)
-        # 3 -> is it a simple number with no hyphens? (0 or 1)  
-        # 4 -> is it a number with hyphens? (o or 1) (such as dates)
-        # 5 -> is it a word? (0 or 1)
-        # 6 -> is it a word with hyphens (0 or 1)
-        # 7 -> length of word (integer)
-        # 8 -> is it a frequent word? (frequency in frequencyDict atleast frequency_threshold) (0 or 1)
-        # 9 -> is the previous word frequent before a name? (frequency of previous word in oneBeforeNameDict
-        #atleast oneBefore_threshold ) 
-        # 10 -> same as 9 but for two words before (0 or 1)
-        # 11 -> same as 9 but for one word after (0 or 1)
-        # 12 - 12 + vocab_size - the index at which the current token is present
-        # (if present) in the vocabDict is set to 1
-        # 12 + vocab_size - 12 + 2*vocab_size - the index at which the previous token is present
-        # (if present) in the vocabDictis set to 1\
-        # 12 + 2*vocab_size - 12 + 3*vocab_size - the index at which the previous token is present
-        # (if present) in the vocabDictis set to 1
-
-        #Therefore, dimensions of the feature is 11 + vocab_size*3 + 1
-        # last one is bias
+        assert len(tokens) == len(pos_tags)
 
         vocab_size = self.vocab_size
         features_list = []
         for i, token in enumerate(tokens):
-            
-            feature = np.zeros(11 + 1 + 3)
 
-            #word pattern features
-            feature[0] = int(i==0)
-            feature[1] = int(re.match('[A-Z][\w-]+$', token) is not None)
-            feature[2] = int(re.match('^[\d]+$', token) is not None)
-            feature[3] = int(re.match('^[\d][\d-]+[-]+[\d-]+$', token) is not None)
-            feature[4] = int(re.match('^[a-zA-Z][\w-]+$', token) is not None)
-            feature[5] = int(re.match('^[a-zA-Z][\w-]+[-]+[\w-]+$', token) is not None)
-
-            #frequency features
-            feature[6] = int(token.lower() in self.frequentNameDict and self.frequentNameDict[token.lower()] > frequentName_threshold)
-            feature[7] = int(token.lower() in self.frequencyDict and self.frequencyDict[token.lower()] > frequency_threshold)
-            feature[8] = int(i>=1 and tokens[i-1].lower() in self.oneBeforeNameDict and self.oneBeforeNameDict[tokens[i-1].lower()]\
-            > oneBefore_threshold)
-            feature[9] = int(i>=2 and tokens[i-2].lower() in self.twoBeforeNameDict and self.twoBeforeNameDict[tokens[i-2].lower()]\
-            > twoBefore_threshold)
-            feature[10] = int(i+1 < len(tokens) and tokens[i+1].lower() in self.oneAfterNameDict and self.oneAfterNameDict[tokens[i+1].lower()]\
-            > oneAfter_threshold)
-
-        
-            #bias
-            feature[11] = 1
-
-            #bag of word indices
-            feature[12:] = 12 + 3*self.vocab_size - 1#words not in vocab
-
-            if token.lower() in self.vocab_dict:
-                feature[12] = 12 + self.vocab_dict[token.lower()]
-
-            if i >= 1 and tokens[i-1].lower() in self.vocab_dict:
-                feature[13] = 12 + self.vocab_dict[tokens[i-1].lower()] + self.vocab_size
-
-                
-            if i+1 < len(tokens) and tokens[i+1].lower() in self.vocab_dict:
-                feature[14] = 12 + self.vocab_dict[tokens[i+1].lower()] + 2*self.vocab_size
-
+            pos_tag = pos_tags[i]
+            feature = self.featurize_oneInstance(tokens, pos_tags, i)
             features_list.append(feature)
         
         return features_list
 
-    def featurize_oneInstance(self, tokens: List[str], idx, frequency_threshold=40, frequentName_threshold = 15, oneBefore_threshold=18,\
-     twoBefore_threshold = 16, oneAfter_threshold=2):
+    def featurize_oneInstance(self, tokens: List[str], pos_tags: List[str], idx):
 
         '''
-        same as the featurize but only computes the feature for the token 
-        at the given index
+        featurization over of a token at a given index
         '''
+
+        #Feature dimensions:
+        # 0 -> is it the first word of the sentence? (0 or 1)
+        # 1 -> Does it start with a capital letter? (0 or 1)
+        # 2 -> is it a simple number with no hyphens? (0 or 1)  
+        # 3 -> is it a number with hyphens? (o or 1) (such as dates)
+        # 4 -> is it a word? (0 or 1)
+        # 5 -> is it a word with hyphens (0 or 1)
+        # 6 -> length of word (integer)
+        # 7 -> prior probability of token being a name.
+        # 8 -> normalized frequency of the token
+        # 9 -> prior probability of the previous token occuring before a name
+        # 10 -> prior probability of the two token before occuring before a name
+        # 11 -> prior probability of the next token occuring after a name
+        # 12 -> tf-idf of current word
+        # 13 -> tf-idf of previous word
+        # 14 -> tf-idf of next word
+        # 15 -> bias
+
+        #the above features are referred to as the "direct features"
+        # and the below ones are the compressed features
+        
+        # 16 -> index of current term (indicator)
+        # 17 -> index of previous term (indicator)
+        # 18 -> index of next term (indicator)
+        # 19 -> index of current term (indicator)
+        # 20 -> index of previous term (indicator)
+        # 21 -> index of next term (indicator)
+
+        #Therefore, dimensions of the feature is 11 + vocab_size*3 + 1
+        # last one is bias
+
+        #the variou
 
         vocab_size = self.vocab_size
         i = idx
         token = tokens[idx]     
+        pos_tag = pos_tags[idx]
 
-    
-        feature = np.zeros(11 + 1 + 3)
+        
+        feature = np.zeros(15 + 1 + 3 + 3)
 
         #word pattern features
         feature[0] = int(i==0)
@@ -286,97 +308,62 @@ class Featurizer():
         feature[3] = int(re.match('^[\d][\d-]+[-]+[\d-]+$', token) is not None)
         feature[4] = int(re.match('^[a-zA-Z][\w-]+$', token) is not None)
         feature[5] = int(re.match('^[a-zA-Z][\w-]+[-]+[\w-]+$', token) is not None)
+        feature[6] = int(re.match('^[a-zA-Z][\w-]+$', token) is not None) * len(token) / 10.0
 
         #frequency features
-        feature[6] = int(token.lower() in self.frequentNameDict and self.frequentNameDict[token.lower()] > frequentName_threshold)
-        feature[7] = int(token.lower() in self.frequencyDict and self.frequencyDict[token.lower()] > frequency_threshold)
-        feature[8] = int(i>=1 and tokens[i-1].lower() in self.oneBeforeNameDict and self.oneBeforeNameDict[tokens[i-1].lower()]\
-        > oneBefore_threshold)
-        feature[9] = int(i>=2 and tokens[i-2].lower() in self.twoBeforeNameDict and self.twoBeforeNameDict[tokens[i-2].lower()]\
-        > twoBefore_threshold)
-        feature[10] = int(i+1 < len(tokens) and tokens[i+1].lower() in self.oneAfterNameDict and self.oneAfterNameDict[tokens[i+1].lower()]\
-        > oneAfter_threshold)
+        if token.lower() in self.frequentNameDict:
+            feature[7] = self.frequentNameDict[token.lower()]/ self.max_frequentNameDict
+        
+        if token.lower() in self.frequencyDict:
+            feature[8] = self.frequencyDict[token.lower()]/ self.max_frequencyDict
 
+        if i>=1 and tokens[i-1].lower() in self.oneBeforeNameDict:
+            feature[9] = self.oneBeforeNameDict[tokens[i-1].lower()]/ self.max_oneBeforeNameDict
+
+        if i>=2 and tokens[i-2].lower() in self.twoBeforeNameDict:
+            feature[10] = self.twoBeforeNameDict[tokens[i-2].lower()]/ self.max_twoBeforeNameDict
+        
+        if i+1 < len(tokens) and tokens[i+1].lower() in self.oneAfterNameDict:
+            feature[11] = self.oneAfterNameDict[tokens[i+1].lower()]/ self.max_oneAfterNameDict
+
+
+        #tf - idf features
+        feature[12] = self.get_tf_idf(token.lower())
+        if i>= 1:
+            feature[13] = self.get_tf_idf(tokens[i-1].lower())
+        if i+1 < len(tokens):
+            feature[14] = self.get_tf_idf(tokens[i+1].lower())
     
         #bias
-        feature[11] = 1
+        feature[15] = 1
 
         #bag of word indices
-        feature[12:] = 12 + 3*self.vocab_size - 1#words not in vocab
+        # feature[16:] = 16 + 3*self.vocab_size - 1#words not in vocab
 
         if token.lower() in self.vocab_dict:
-            feature[12] = 12 + self.vocab_dict[token.lower()]
+            feature[16] = 16 + self.vocab_dict[token.lower()]
+        else:
+            feature[16] = 16 + self.vocab_size
 
         if i >= 1 and tokens[i-1].lower() in self.vocab_dict:
-            feature[13] = 12 + self.vocab_dict[tokens[i-1].lower()] + self.vocab_size
+            feature[17] = 16 + self.vocab_dict[tokens[i-1].lower()] + self.vocab_size + 1
+        else:
+            feature[17] = 16 + 2*self.vocab_size + 1
 
             
         if i+1 < len(tokens) and tokens[i+1].lower() in self.vocab_dict:
-            feature[14] = 12 + self.vocab_dict[tokens[i+1].lower()] + 2*self.vocab_size
+            feature[18] = 16 + self.vocab_dict[tokens[i+1].lower()] + 2*self.vocab_size + 2
+        else:
+            feature[18] = 16 + 3*self.vocab_size + 2
+        
+        if pos_tag.lower() in self.pos_dict:
+            feature[19] = 16 + 3*self.vocab_size + 3 + self.pos_dict[pos_tag.lower()]
+        
+        if i>=1 and pos_tags[i-1].lower() in self.pos_dict:
+            feature[20] = 16 + 3*self.vocab_size + 3 + self.pos_dict[pos_tags[i-1].lower()] + self.total_posTags
+        
+        if i+1 < len(tokens) and pos_tags[i+1].lower() in self.pos_dict:
+            feature[21] = 16 + 3*self.vocab_size + 3 + self.pos_dict[pos_tags[i+1].lower()] + 2*self.total_posTags
 
         
         return feature
-
-
-
-
-
-
-
-
-
-
-
-if __name__ == '__main__':                                                                                                                                                                                                                                                                                                      
-
-    args = _parse_args()
-    train_class_exs = list(transform_for_classification(read_data(args.train_path)))
-    dev_class_exs = list(transform_for_classification(read_data(args.dev_path)))
-
-    featurizer = Featurizer(train_class_exs)
-
-    from sklearn.linear_model import LogisticRegression as model
-    from sklearn.metrics import f1_score
-    import pickle
-
-    X = []
-    Y = []
-    for ex in train_class_exs:
-        features = featurizer.featurize(ex.tokens)
-        X += features
-        Y += ex.labels
-
-    np_y = np.array(Y)
-    pos_class = np.sum(np_y==1)
-    neg_class = np.sum(np_y==0)
-
-    # print(len(np_y)/(2 * pos_class))
-    # print(len(np_y)/(2* neg_class))
-    # exit(0)
-        
-    print(len(X))
-    print(len(Y))
-
-    model_instance = model(class_weight= 'balanced', max_iter=1000)
-    model_instance.fit(X, Y)
-    print(model_instance.score(X, Y))
-
-    pickle.dump(model_instance, open('LR_model.pkl', 'wb'))
-    predY = model_instance.predict(X)
-    print(np.sum(predY))
-    print(f1_score(Y, predY))
-    exit(0)
-
-    model_instance = pickle.load(open('LR_model.pkl', 'rb'))
-
-    devX = []
-    devY = []
-
-    for ex in dev_class_exs:
-        features = featurize(ex.tokens, vocab_dict, frequencyDict, oneBeforeNameDict, twoBeforeNameDict, oneAfterNameDict)
-        devX += features
-        devY += ex.labels
-    predY = model_instance.predict(devX)
-    print(np.sum(predY))
-    print(f1_score(devY, predY))
-    print(model_instance.score(devX, devY))
