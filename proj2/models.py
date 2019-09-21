@@ -60,13 +60,69 @@ class HmmNerModel(object):
         self.transition_log_probs = transition_log_probs
         self.emission_log_probs = emission_log_probs
 
+
     def decode(self, sentence_tokens: List[Token]):
         """
         See BadNerModel for an example implementation
         :param sentence_tokens: List of the tokens in the sentence to tag
         :return: The LabeledSentence consisting of predictions over the sentence
         """
-        raise Exception("IMPLEMENT ME")
+
+        N = len(self.init_log_probs)
+        T = len(sentence_tokens)
+        dp = np.zeros((N, T)) - np.inf #initialized to a low value as we have to find maximum
+
+        #initialization 
+        for state_idx in range(N):
+            word_idx = self.word_indexer.index_of(sentence_tokens[0].word)
+            dp[state_idx,0] = self.init_log_probs[state_idx] + self.emission_log_probs[state_idx, word_idx]
+        
+        #forward
+        for t in range(1, T):
+            token = sentence_tokens[t]
+            word_idx = self.word_indexer.index_of(token.word)
+            for cur_state_idx in range(N):
+                for prev_state_idx in range(N):
+                    new_prob = dp[prev_state_idx, t-1] + self.transition_log_probs[prev_state_idx, cur_state_idx]\
+                    + self.emission_log_probs[cur_state_idx, word_idx]
+                    dp[cur_state_idx, t] = max(dp[cur_state_idx, t], new_prob)
+        
+        #backtracing
+        pred_tag_indexes = [] #will be stored in reverse order
+        pred_tag_indexes.append(np.argmax(dp[:, -1]))
+        
+        for t in range(T-2, -1, -1):
+            next_state_idx = pred_tag_indexes[-1]
+            max_prob = -np.inf
+            max_state_idx = -1
+
+
+            for cur_state_idx in range(N):
+                prob = dp[cur_state_idx, t] + self.transition_log_probs[cur_state_idx, next_state_idx]
+                if prob > max_prob:
+                    max_prob = prob
+                    max_state_idx = cur_state_idx
+
+            assert max_state_idx != -1
+            pred_tag_indexes.append(max_state_idx)
+        
+
+        pred_tags = []
+
+        for tag_index in reversed(pred_tag_indexes):
+            pred_tags.append(self.tag_indexer.get_object(tag_index))
+
+
+        assert len(pred_tags) == T
+        
+
+                
+
+        
+
+        # raise Exception("IMPLEMENT ME")
+        return LabeledSentence(sentence_tokens, chunks_from_bio_tag_seq(pred_tags))
+
 
 
 def train_hmm_model(sentences: List[LabeledSentence]) -> HmmNerModel:
@@ -94,9 +150,9 @@ def train_hmm_model(sentences: List[LabeledSentence]) -> HmmNerModel:
             tag_indexer.add_and_get_index(tag)
     # Count occurrences of initial tags, transitions, and emissions
     # Apply additive smoothing to avoid log(0) / infinities / etc.
-    init_counts = np.ones((len(tag_indexer)), dtype=float) * 0.001
-    transition_counts = np.ones((len(tag_indexer),len(tag_indexer)), dtype=float) * 0.001
-    emission_counts = np.ones((len(tag_indexer),len(word_indexer)), dtype=float) * 0.001
+    init_counts = np.zeros((len(tag_indexer)), dtype=float) + 0.0001
+    transition_counts = np.zeros((len(tag_indexer),len(tag_indexer)), dtype=float)  + 0.000000001
+    emission_counts = np.zeros((len(tag_indexer),len(word_indexer)), dtype=float)   + 0.0001
     for sentence in sentences:
         bio_tags = sentence.get_bio_tags()
         for i in range(0, len(sentence)):
@@ -123,6 +179,7 @@ def train_hmm_model(sentences: List[LabeledSentence]) -> HmmNerModel:
     print("Emission log probs for India: %s" % emission_counts[:,word_indexer.add_and_get_index("India")])
     print("Emission log probs for Phil: %s" % emission_counts[:,word_indexer.add_and_get_index("Phil")])
     print("   note that these distributions don't normalize because it's p(word|tag) that normalizes, not p(tag|word)")
+    
     return HmmNerModel(tag_indexer, word_indexer, init_counts, transition_counts, emission_counts)
 
 
