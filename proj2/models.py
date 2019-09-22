@@ -71,53 +71,45 @@ class HmmNerModel(object):
         N = len(self.init_log_probs)
         T = len(sentence_tokens)
         dp = np.zeros((N, T)) - np.inf #initialized to a low value as we have to find maximum
+        prev = np.zeros((N, T)) #backpointers
 
         #initialization 
         for state_idx in range(N):
             word_idx = self.word_indexer.index_of(sentence_tokens[0].word)
+            if(word_idx == -1):
+               word_idx = self.word_indexer.index_of("UNK")
             dp[state_idx,0] = self.init_log_probs[state_idx] + self.emission_log_probs[state_idx, word_idx]
         
         #forward
         for t in range(1, T):
             token = sentence_tokens[t]
             word_idx = self.word_indexer.index_of(token.word)
+            if(word_idx == -1):
+               word_idx = self.word_indexer.index_of("UNK")
+               
             for cur_state_idx in range(N):
-                for prev_state_idx in range(N):
-                    new_prob = dp[prev_state_idx, t-1] + self.transition_log_probs[prev_state_idx, cur_state_idx]\
-                    + self.emission_log_probs[cur_state_idx, word_idx]
-                    dp[cur_state_idx, t] = max(dp[cur_state_idx, t], new_prob)
-        
+                tmp = dp[:, t-1] + self.transition_log_probs[:, cur_state_idx]
+                best_prev = tmp.argmax()
+                prev[cur_state_idx, t] = best_prev
+                dp[cur_state_idx, t] = tmp[best_prev] + self.emission_log_probs[cur_state_idx, word_idx]
+         
         #backtracing
         pred_tag_indexes = [] #will be stored in reverse order
-        pred_tag_indexes.append(np.argmax(dp[:, -1]))
+        temp_status = np.argmax(dp[:, -1])
+        pred_tag_indexes.append(temp_status)
         
-        for t in range(T-2, -1, -1):
-            next_state_idx = pred_tag_indexes[-1]
-            max_prob = -np.inf
-            max_state_idx = -1
-
-
-            for cur_state_idx in range(N):
-                prob = dp[cur_state_idx, t] + self.transition_log_probs[cur_state_idx, next_state_idx]
-                if prob > max_prob:
-                    max_prob = prob
-                    max_state_idx = cur_state_idx
-
-            assert max_state_idx != -1
-            pred_tag_indexes.append(max_state_idx)
+        for t in range(T-1, 0, -1):
+           temp_status = prev[int(temp_status), t]
+           pred_tag_indexes.append(temp_status)
         
-
+        pred_tag_indexes = pred_tag_indexes[::-1]
         pred_tags = []
 
-        for tag_index in reversed(pred_tag_indexes):
+        for tag_index in pred_tag_indexes:
             pred_tags.append(self.tag_indexer.get_object(tag_index))
 
 
         assert len(pred_tags) == T
-        
-
-                
-
         
 
         # raise Exception("IMPLEMENT ME")
