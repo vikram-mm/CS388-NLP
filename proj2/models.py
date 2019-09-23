@@ -216,6 +216,7 @@ def train_crf_model(sentences):
         for word_idx in range(0, len(sentences[sentence_idx])):
             for tag_idx in range(0, len(tag_indexer)):
                 feature_cache[sentence_idx][word_idx][tag_idx] = extract_emission_features(sentences[sentence_idx].tokens, word_idx, tag_indexer.get_object(tag_idx), feature_indexer, add_to_indexer=True)
+  
     print("Training")
     raise Exception("IMPLEMENT THE REST OF ME")
 
