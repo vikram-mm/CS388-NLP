@@ -6,8 +6,12 @@ from utils import *
 
 from collections import Counter
 from typing import List
-
+from crf import CRF
 import numpy as np
+import pickle
+import os
+import torch
+import torch.optim as optim
 
 
 class ProbabilisticSequenceScorer(object):
@@ -191,13 +195,36 @@ def get_word_index(word_indexer: Indexer, word_counter: Counter, word: str) -> i
 
 
 class CrfNerModel(object):
-    def __init__(self, tag_indexer, feature_indexer, feature_weights):
+    def __init__(self, tag_indexer, feature_indexer, crf_model):
         self.tag_indexer = tag_indexer
         self.feature_indexer = feature_indexer
-        self.feature_weights = feature_weights
+        self.model = crf_model
 
     def decode(self, sentence_tokens):
-        raise Exception("IMPLEMENT ME")
+        tag_indexer = self.tag_indexer
+        feature_indexer = self.feature_indexer
+
+        all_features = []
+        for word_idx in range(0, len(sentence_tokens)):
+            features = []
+            for tag_idx in range(0, len(tag_indexer)):
+                features.append(extract_emission_features(sentence_tokens,\
+                    word_idx, tag_indexer.get_object(tag_idx), feature_indexer, add_to_indexer=False))
+
+            all_features.append(features)
+        
+        # print(all_features)
+        all_features = np.array(all_features)
+        # print(all_features.shape)
+        best_tags = self.model(all_features)[0]
+        
+        pred_tags = []
+
+        for tag in best_tags:
+            pred_tags.append(tag_indexer.get_object(tag))
+        
+        return LabeledSentence(sentence_tokens, chunks_from_bio_tag_seq(pred_tags))
+            
 
 
 # Trains a CrfNerModel on the given corpus of sentences.
@@ -206,19 +233,83 @@ def train_crf_model(sentences):
     for sentence in sentences:
         for tag in sentence.get_bio_tags():
             tag_indexer.add_and_get_index(tag)
-    print("Extracting features")
-    feature_indexer = Indexer()
-    # 4-d list indexed by sentence index, word index, tag index, feature index
-    feature_cache = [[[[] for k in range(0, len(tag_indexer))] for j in range(0, len(sentences[i]))] for i in range(0, len(sentences))]
-    for sentence_idx in range(0, len(sentences)):
-        if sentence_idx % 100 == 0:
-            print("Ex %i/%i" % (sentence_idx, len(sentences)))
-        for word_idx in range(0, len(sentences[sentence_idx])):
-            for tag_idx in range(0, len(tag_indexer)):
-                feature_cache[sentence_idx][word_idx][tag_idx] = extract_emission_features(sentences[sentence_idx].tokens, word_idx, tag_indexer.get_object(tag_idx), feature_indexer, add_to_indexer=True)
-  
-    print("Training")
-    raise Exception("IMPLEMENT THE REST OF ME")
+    
+
+    feature_indexer_file = "feature_indexer.pkl"
+    feature_cache_file = "features.pkl"
+
+    if not os.path.isfile(feature_indexer_file) or not os.path.isfile(feature_cache_file):
+        print("Extracting features")
+        feature_indexer = Indexer()
+        feature_cache = [[[[] for k in range(0, len(tag_indexer))] for j in range(0, len(sentences[i]))] for i in range(0, len(sentences))]
+        for sentence_idx in range(0, len(sentences)):
+            if sentence_idx % 100 == 0:
+                print("Ex %i/%i" % (sentence_idx, len(sentences)))
+            for word_idx in range(0, len(sentences[sentence_idx])):
+                for tag_idx in range(0, len(tag_indexer)):
+                    feature_cache[sentence_idx][word_idx][tag_idx] = extract_emission_features(sentences[sentence_idx].tokens, word_idx, tag_indexer.get_object(tag_idx), feature_indexer, add_to_indexer=True)
+    
+        pickle.dump(feature_indexer, open(feature_indexer_file, "wb"))
+        pickle.dump(feature_cache, open(feature_cache_file, "wb"))
+    else:
+        print("Loading features")
+        feature_indexer = pickle.load(open(feature_indexer_file, "rb"))
+        feature_cache = pickle.load(open(feature_cache_file, "rb"))
+
+    lr = 0.01
+    
+
+    num_epochs = 3
+    train = False
+    if train:
+        crf_model = CRF(num_features = len(feature_indexer), nb_labels = len(tag_indexer))
+        transmission_optimizer = optim.SGD([crf_model.transitions], lr=lr)
+        # emission_optimizers = []
+
+        # for i in range(len(crf_model.emmision_weights)):
+        #     optimizer = optim.Adagrad([crf_model.emmision_weights[i]], lr)
+        #     emission_optimizers.append(optimizer)
+
+        emmision_optimizer = optim.Adam([crf_model.emmision_weights], lr=lr)
+        for epoch in range(num_epochs):
+            total_loss = 0.0
+            total_count = 0.0
+            for sentence_idx in range(len(feature_cache)):
+                sentence = sentences[sentence_idx]
+                true_tags = []
+                for tag in sentence.get_bio_tags():
+                    true_tags.append(tag_indexer.index_of(tag))
+                x = np.array(feature_cache[sentence_idx])
+
+                true_tags  = np.expand_dims(np.array(true_tags), axis=0)
+
+                crf_model.zero_grad()
+                loss = crf_model.loss(x, true_tags)
+                total_loss += loss.item()
+                total_count += 1
+                loss.backward()
+                emmision_grads = crf_model.emmision_weights.grad
+
+                transmission_optimizer.step()
+                emmision_optimizer.step()
+                # optimizer.step()
+
+                if(sentence_idx%100 == 0):
+                    print("epoch {} {}/{} done loss {}".format(epoch, sentence_idx, len(feature_cache), total_loss/total_count))
+
+                # if(sentence_idx == 100):
+                #     break
+            print("epoch {}, loss {}".format(epoch, total_loss/total_count))
+            save_path = "model.crf"
+            torch.save(crf_model, save_path)
+            print("model saved to {}".format(save_path))
+    else:
+        crf_model = torch.load("model.crf")
+        
+    return CrfNerModel(tag_indexer, feature_indexer, crf_model)
+
+
+    # raise Exception("IMPLEMENT THE REST OF ME")
 
 
 def extract_emission_features(sentence_tokens: List[Token], word_index: int, tag: str, feature_indexer: Indexer, add_to_indexer: bool):
@@ -272,5 +363,8 @@ def extract_emission_features(sentence_tokens: List[Token], word_index: int, tag
         else:
             new_word += "?"
     maybe_add_feature(feats, feature_indexer, add_to_indexer, tag + ":WordShape=" + repr(new_word))
+    
+    while len(feats) < 14:
+        feats.append(0)
     return np.asarray(feats, dtype=int)
 
