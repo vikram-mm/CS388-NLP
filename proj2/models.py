@@ -259,8 +259,8 @@ def train_crf_model(sentences):
     lr = 0.01
     
 
-    num_epochs = 3
-    train = False
+    num_epochs = 1
+    train = True
     if train:
         crf_model = CRF(num_features = len(feature_indexer), nb_labels = len(tag_indexer))
         transmission_optimizer = optim.SGD([crf_model.transitions], lr=lr)
@@ -289,6 +289,8 @@ def train_crf_model(sentences):
                 total_count += 1
                 loss.backward()
                 emmision_grads = crf_model.emmision_weights.grad
+                print(emmision_grads[0:130])
+                exit(0)
 
                 transmission_optimizer.step()
                 emmision_optimizer.step()
@@ -300,7 +302,7 @@ def train_crf_model(sentences):
                 # if(sentence_idx == 100):
                 #     break
             print("epoch {}, loss {}".format(epoch, total_loss/total_count))
-            save_path = "model.crf"
+            save_path = "model_2.crf"
             torch.save(crf_model, save_path)
             print("model saved to {}".format(save_path))
     else:

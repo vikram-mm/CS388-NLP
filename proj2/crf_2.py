@@ -6,7 +6,7 @@ import numpy as np
 class CRF(nn.Module):
 
     def __init__(
-        self, num_features, nb_labels, pad_tag_id=None, batch_first=True):
+        self, num_features, nb_labels, transition_matrix, pad_tag_id=None, batch_first=True):
         super().__init__()
 
         print("CRF model instantiated with num_features = {} and nb_labels = {}".format(num_features, nb_labels))
@@ -16,8 +16,17 @@ class CRF(nn.Module):
         self.BOS_TAG_ID = nb_labels
         self.EOS_TAG_ID = nb_labels + 1
 
-        self.transitions = nn.Parameter(torch.empty(self.nb_labels, self.nb_labels))
+        self.transitions = torch.zeros(torch.empty(self.nb_labels, self.nb_labels))
+        self.transitions.data[0:nb_labels][0:nb_labels] = transition_matrix
+        self.transitions.data[:, self.BOS_TAG_ID] = -10000.0
+        self.transitions.data[self.EOS_TAG_ID, :] = -10000.0
+
+        print(self.transition_matrix)
+        exit(0)
+
         self.emmision_weights = nn.Parameter(torch.empty(num_features, 1))
+        nn.init.uniform_(self.emmision_weights, -0.1, 0.1)
+
         self.num_features = num_features
         self.init_weights()
 
