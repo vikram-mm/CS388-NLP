@@ -93,7 +93,11 @@ if __name__ == '__main__':
     elif system_to_run == "CRF":
         crf_model = train_crf_model(train)
         print("Data reading and training took %f seconds" % (time.time() - start_time))
-        dev_decoded = [crf_model.decode(test_ex.tokens) for test_ex in dev]
+        dev_decoded = []
+
+        for i, test_ex in enumerate(dev):
+            dev_decoded.append(crf_model.decode(test_ex.tokens))
+            print("{} / {} completed".format(i, len(dev)))
         if args.run_on_test:
             print("Running on test")
             test = read_data(args.blind_test_path)

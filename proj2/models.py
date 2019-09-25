@@ -216,11 +216,17 @@ class CrfNerModel(object):
         # print(all_features)
         all_features = np.array(all_features)
         # print(all_features.shape)
-        best_tags = self.model(all_features)[0]
+        best_tags = self.model(all_features)
+
+        
         
         pred_tags = []
 
         for tag in best_tags:
+            if tag_indexer.get_object(tag) is None:
+                print(tag)
+                print(best_tags)
+                exit(0)
             pred_tags.append(tag_indexer.get_object(tag))
         
         return LabeledSentence(sentence_tokens, chunks_from_bio_tag_seq(pred_tags))
@@ -257,19 +263,13 @@ def train_crf_model(sentences):
         feature_cache = pickle.load(open(feature_cache_file, "rb"))
 
     lr = 0.01
-    
+  
 
     num_epochs = 1
-    train = True
+    train = False
     if train:
-        crf_model = CRF(num_features = len(feature_indexer), nb_labels = len(tag_indexer))
+        crf_model = CRF(num_features = len(feature_indexer), nb_labels = len(tag_indexer), )
         transmission_optimizer = optim.SGD([crf_model.transitions], lr=lr)
-        # emission_optimizers = []
-
-        # for i in range(len(crf_model.emmision_weights)):
-        #     optimizer = optim.Adagrad([crf_model.emmision_weights[i]], lr)
-        #     emission_optimizers.append(optimizer)
-
         emmision_optimizer = optim.Adam([crf_model.emmision_weights], lr=lr)
         for epoch in range(num_epochs):
             total_loss = 0.0
@@ -288,26 +288,23 @@ def train_crf_model(sentences):
                 total_loss += loss.item()
                 total_count += 1
                 loss.backward()
-                emmision_grads = crf_model.emmision_weights.grad
-                print(emmision_grads[0:130])
-                exit(0)
-
-                transmission_optimizer.step()
+                emmision_grads = crf_model
+                # transmission_optimizer.step()
                 emmision_optimizer.step()
-                # optimizer.step()
 
                 if(sentence_idx%100 == 0):
                     print("epoch {} {}/{} done loss {}".format(epoch, sentence_idx, len(feature_cache), total_loss/total_count))
 
-                # if(sentence_idx == 100):
+                # if(sentence_idx == 2000):
                 #     break
             print("epoch {}, loss {}".format(epoch, total_loss/total_count))
-            save_path = "model_2.crf"
+            save_path = "model_crf_final.crf"
             torch.save(crf_model, save_path)
             print("model saved to {}".format(save_path))
     else:
+        # print(tag_indexer.__repr__)
         crf_model = torch.load("model.crf")
-        
+
     return CrfNerModel(tag_indexer, feature_indexer, crf_model)
 
 

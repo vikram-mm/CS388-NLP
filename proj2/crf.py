@@ -24,9 +24,27 @@ class CRF(nn.Module):
     def init_weights(self):
         # initialize transitions from a random uniform distribution between -0.1 and 0.1
         nn.init.uniform_(self.transitions, -0.1, 0.1)
-        nn.init.uniform_(self.emmision_weights, -0.1, 0.1)
+        nn.init.uniform_(self.emmision_weights, 1.0, 1.0)
+
+        #I-PER
+        self.transitions.data[0:3, 4] = -10.0
+        self.transitions.data[4:, 4] = -10.0
+
+        #I-ORG
+        self.transitions.data[0:1, 6] = -10.0
+        self.transitions.data[2:, 6] =  -10.0
+
+        #I_MISC
+        self.transitions.data[0:2, 7] = -10.0
+        self.transitions.data[3:, 7] =  -10.0
+
+        #I_LOC
+        self.transitions.data[0:5, 8] =  -10.0
+        self.transitions.data[6:, 8] =  -10.0
+
         self.transitions.data[:, self.BOS_TAG_ID] = -10000.0
         self.transitions.data[self.EOS_TAG_ID, :] = -10000.0
+
 
     def get_emssions(self, seq_x):
         '''
@@ -97,6 +115,19 @@ class CRF(nn.Module):
             # add this path to the list of best sequences
             best_sequences.append(sample_path)
 
+        best_sequences = best_sequences[0]
+        for i in range(1, len(best_sequences)):
+            if(best_sequences[i] == 4 and best_sequences[i-1] != 3 and best_sequences[i-1]!=4):
+                best_sequences[i] = 3
+            elif (best_sequences[i] == 6 and best_sequences[i-1] != 1 and best_sequences[i-1]!=6):
+                best_sequences[i] = 1
+            elif (best_sequences[i] == 7 and best_sequences[i-1] != 2 and best_sequences[i-1]!=7):
+                best_sequences[i] = 2
+            elif (best_sequences[i] == 8 and best_sequences[i-1] != 5 and best_sequences[i-1]!=8):
+                best_sequences[i] = 5
+        
+        # print(max_final_scores)
+        # print(best_sequences)
         return max_final_scores, best_sequences
 
     def find_best_path(self, sample_id, best_tag, backpointers):
@@ -121,8 +152,9 @@ class CRF(nn.Module):
 
     def log_likelihood(self, emissions, tags):
         scores = self.compute_scores(emissions, tags)
-        partition = self.compute_log_partition(emissions)
-        return torch.sum(scores - partition)
+        # partition = self.compute_log_partition(emissions)
+        # return torch.sum(scores - partition)
+        return torch.sum(scores)
 
     def compute_scores(self, emissions, tags):
 

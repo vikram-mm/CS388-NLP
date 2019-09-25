@@ -19,29 +19,33 @@ class CRF(nn.Module):
         self.transitions = torch.ones(self.nb_labels, self.nb_labels, requires_grad=False)
 
         #I-PER
-        self.transitions.data[:, 4] = -100.0
-        self.transitions.data[3, 4] = 1.0
+        self.transitions.data[0:3, 4] = 0.0
+        self.transitions.data[4:, 4] = 0.0
 
         #I-ORG
-        self.transitions.data[:, 6] = -100.0
-        self.transitions.data[1, 6] = 1.0
+        self.transitions.data[0:1, 6] = 0.0
+        self.transitions.data[2:, 6] =  0.0
 
         #I_MISC
-        self.transitions.data[:, 7] = -100.0
-        self.transitions.data[2, 7] = 1.0
+        self.transitions.data[0:2, 7] = 0.0
+        self.transitions.data[3:, 7] =  0.0
 
         #I_LOC
-        self.transitions.data[:, 8] = -100.0
-        self.transitions.data[5, 8] = 1.0
+        self.transitions.data[0:5, 8] =  0.0
+        self.transitions.data[6:, 8] =  0.0
 
-        self.transitions.data[:, self.BOS_TAG_ID] = -10000.0
-        self.transitions.data[self.EOS_TAG_ID, :] = -10000.0
+
+        self.transitions.data[:, self.BOS_TAG_ID] = -1.0
+        self.transitions.data[self.EOS_TAG_ID, :] = -1.0
 
 
         self.emmision_weights = nn.Parameter(torch.empty(num_features, 1))
         nn.init.uniform_(self.emmision_weights, -0.1, 0.1)
 
         self.num_features = num_features
+
+
+
 
     def get_emssions(self, seq_x):
         '''
@@ -72,7 +76,7 @@ class CRF(nn.Module):
     def viterbi_decode(self, emissions):
 
         batch_size, seq_length, nb_labels = emissions.shape
-        alphas = self.transitions[self.BOS_TAG_ID, :].unsqueeze(0) + emissions[:, 0]
+        alphas = self.transitions[self.BOS_TAG_ID, :].unsqueeze(0) * emissions[:, 0]
         backpointers = []
 
         for i in range(1, seq_length):
@@ -85,10 +89,7 @@ class CRF(nn.Module):
                 e_scores = e_scores.unsqueeze(1)
                 t_scores = self.transitions[:, tag]
                 t_scores = t_scores.unsqueeze(0)
-                # print(e_scores)
-                # print(t_scores)
-                # exit(0)
-                scores = e_scores + t_scores + alphas
+                scores = e_scores * t_scores + alphas
                 max_score, max_score_tag = torch.max(scores, dim=-1)
                 alpha_t.append(max_score)
                 backpointers_t.append(max_score_tag)
@@ -139,8 +140,7 @@ class CRF(nn.Module):
 
     def log_likelihood(self, emissions, tags):
         scores = self.compute_scores(emissions, tags)
-        partition, end_scores = self.compute_log_partition(emissions)
-        # print(torch.log(end_scores-scores))
+        partition = self.compute_log_partition(emissions)
         return torch.sum(scores - partition)
 
     def compute_scores(self, emissions, tags):
@@ -151,21 +151,25 @@ class CRF(nn.Module):
         all_emm = torch.ones(emissions.shape[:2])
         last_valid_idx = all_emm.int().sum(1) - 1
         last_tags = tags.gather(1, last_valid_idx.unsqueeze(1)).squeeze()
+        t_scores = self.transitions[self.BOS_TAG_ID, first_tags]
         e_scores = emissions[:, 0].gather(1, first_tags.unsqueeze(1)).squeeze()
-        scores += e_scores
+        scores += e_scores + t_scores
 
         for i in range(1, seq_length):
             previous_tags = tags[:, i - 1]
             current_tags = tags[:, i]
             e_scores = emissions[:, i].gather(1, current_tags.unsqueeze(1)).squeeze()
-            scores += e_scores
+            t_scores = self.transitions[previous_tags, current_tags]
+            scores += e_scores + t_scores
+
+        scores += self.transitions[last_tags, self.EOS_TAG_ID]
 
         return scores
 
     def compute_log_partition(self, emissions):
 
         batch_size, seq_length, nb_labels = emissions.shape
-        alphas = self.transitions[self.BOS_TAG_ID, :].unsqueeze(0) + emissions[:, 0]
+        alphas = self.transitions[self.BOS_TAG_ID, :].unsqueeze(0) * emissions[:, 0]
 
         for i in range(1, seq_length):
             alpha_t = []
@@ -174,9 +178,11 @@ class CRF(nn.Module):
 
                 e_scores = emissions[:, i, tag]
                 e_scores = e_scores.unsqueeze(1)
+                t_scores = self.transitions[:, tag]
+                t_scores = t_scores.unsqueeze(0)
 
                 # combine current scores with previous alphas
-                scores = e_scores + alphas
+                scores = e_scores * t_scores + alphas
 
                 # add the new alphas for the current tag
                 alpha_t.append(torch.logsumexp(scores, dim=1))
@@ -185,8 +191,9 @@ class CRF(nn.Module):
             alphas = new_alphas
 
         # add the scores for the final transition
-        end_scores = alphas
+        last_transition = self.transitions[:, self.EOS_TAG_ID]
+        end_scores = alphas + last_transition.unsqueeze(0)
 
         # return a *log* of sums of exps
-        return torch.logsumexp(end_scores, dim=1), end_scores
+        return torch.logsumexp(end_scores, dim=1)
 
