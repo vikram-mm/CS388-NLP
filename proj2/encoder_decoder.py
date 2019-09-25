@@ -107,7 +107,9 @@ if __name__ == "__main__":
         print(embedded_x.shape)
         all_embedded.append(embedded_x)
     
-    pickle.dump(all_embedded, open("embedded.cache", "wb"))
+        if(i%100 == 0):
+            print("{} done".format(i))
+            pickle.dump(all_embedded, open("embedded.cache", "wb"))
         
     
     # print("epoch : {}, loss {}".format(epoch, total_loss/total_count))

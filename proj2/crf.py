@@ -152,9 +152,8 @@ class CRF(nn.Module):
 
     def log_likelihood(self, emissions, tags):
         scores = self.compute_scores(emissions, tags)
-        # partition = self.compute_log_partition(emissions)
-        # return torch.sum(scores - partition)
-        return torch.sum(scores)
+        partition = self.compute_log_partition(emissions)
+        return torch.sum(scores - partition)
 
     def compute_scores(self, emissions, tags):
 

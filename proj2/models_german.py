@@ -241,11 +241,11 @@ def train_crf_model(sentences):
             tag_indexer.add_and_get_index(tag)
     
 
-    feature_indexer_file = "feature_indexer.pkl"
-    feature_cache_file = "features.pkl"
+    feature_indexer_file = "german_feature_indexer.pkl"
+    feature_cache_file = "german_features.pkl"
 
     if not os.path.isfile(feature_indexer_file) or not os.path.isfile(feature_cache_file):
-        print("Extracting features")
+        print("Extracting german features")
         feature_indexer = Indexer()
         feature_cache = [[[[] for k in range(0, len(tag_indexer))] for j in range(0, len(sentences[i]))] for i in range(0, len(sentences))]
         for sentence_idx in range(0, len(sentences)):
@@ -257,6 +257,7 @@ def train_crf_model(sentences):
     
         pickle.dump(feature_indexer, open(feature_indexer_file, "wb"))
         pickle.dump(feature_cache, open(feature_cache_file, "wb"))
+
     else:
         print("Loading features")
         feature_indexer = pickle.load(open(feature_indexer_file, "rb"))
@@ -289,7 +290,7 @@ def train_crf_model(sentences):
                 total_count += 1
                 loss.backward()
                 emmision_grads = crf_model
-                transmission_optimizer.step()
+                # transmission_optimizer.step()
                 emmision_optimizer.step()
 
                 if(sentence_idx%100 == 0):
