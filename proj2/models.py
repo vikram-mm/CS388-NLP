@@ -1,369 +1,117 @@
-# models.py
-
-from optimizers import *
-from nerdata import *
-from utils import *
-
-from collections import Counter
-from typing import List
-from crf import CRF
-import numpy as np
-import pickle
-import os
 import torch
-import torch.optim as optim
+import torch.nn as nn
+import torch.nn.functional as F
+import random
+from torch.autograd import Variable as Var
 
+import numpy as np
 
-class ProbabilisticSequenceScorer(object):
+###################################################################################################################
+# You do not have to use any of the classes in this file, but they're meant to give you a starting implementation.
+# for your network.
+###################################################################################################################
+
+class EmbeddingLayer(nn.Module):
     """
-    Scoring function for sequence models based on conditional probabilities.
-    Scores are provided for three potentials in the model: initial scores (applied to the first tag),
-    emissions, and transitions. Note that CRFs typically don't use potentials of the first type.
-
-    Attributes:
-        tag_indexer: Indexer mapping BIO tags to indices. Useful for dynamic programming
-        word_indexer: Indexer mapping words to indices in the emission probabilities matrix
-        init_log_probs: [num_tags]-length array containing initial sequence log probabilities
-        transition_log_probs: [num_tags, num_tags] matrix containing transition log probabilities (prev, curr)
-        emission_log_probs: [num_tags, num_words] matrix containing emission log probabilities (tag, word)
+    Embedding layer that has a lookup table of symbols that is [full_dict_size x input_dim]. Includes dropout.
+    Works for both non-batched and batched inputs
     """
-    def __init__(self, tag_indexer: Indexer, word_indexer: Indexer, init_log_probs: np.ndarray, transition_log_probs: np.ndarray, emission_log_probs: np.ndarray):
-        self.tag_indexer = tag_indexer
-        self.word_indexer = word_indexer
-        self.init_log_probs = init_log_probs
-        self.transition_log_probs = transition_log_probs
-        self.emission_log_probs = emission_log_probs
-
-    def score_init(self, sentence_tokens: List[Token], tag_idx: int):
-        return self.init_log_probs[tag_idx]
-
-    def score_transition(self, sentence_tokens: List[Token], prev_tag_idx: int, curr_tag_idx: int):
-        return self.transition_log_probs[prev_tag_idx, curr_tag_idx]
-
-    def score_emission(self, sentence_tokens: List[Token], tag_idx: int, word_posn: int):
-        word = sentence_tokens[word_posn].word
-        word_idx = self.word_indexer.index_of(word) if self.word_indexer.contains(word) else self.word_indexer.index_of("UNK")
-        return self.emission_log_probs[tag_idx, word_idx]
-
-
-class HmmNerModel(object):
-    """
-    HMM NER model for predicting tags
-
-    Attributes:
-        tag_indexer: Indexer mapping BIO tags to indices. Useful for dynamic programming
-        word_indexer: Indexer mapping words to indices in the emission probabilities matrix
-        init_log_probs: [num_tags]-length array containing initial sequence log probabilities
-        transition_log_probs: [num_tags, num_tags] matrix containing transition log probabilities (prev, curr)
-        emission_log_probs: [num_tags, num_words] matrix containing emission log probabilities (tag, word)
-    """
-    def __init__(self, tag_indexer: Indexer, word_indexer: Indexer, init_log_probs, transition_log_probs, emission_log_probs):
-        self.tag_indexer = tag_indexer
-        self.word_indexer = word_indexer
-        self.init_log_probs = init_log_probs
-        self.transition_log_probs = transition_log_probs
-        self.emission_log_probs = emission_log_probs
-
-
-    def decode(self, sentence_tokens: List[Token]):
+    def __init__(self, input_dim: int, full_dict_size: int, embedding_dropout_rate: float):
         """
-        See BadNerModel for an example implementation
-        :param sentence_tokens: List of the tokens in the sentence to tag
-        :return: The LabeledSentence consisting of predictions over the sentence
+        :param input_dim: dimensionality of the word vectors
+        :param full_dict_size: number of words in the vocabulary
+        :param embedding_dropout_rate: dropout rate to apply
         """
+        super(EmbeddingLayer, self).__init__()
+        self.dropout = nn.Dropout(embedding_dropout_rate)
+        self.word_embedding = nn.Embedding(full_dict_size, input_dim)
 
-        N = len(self.init_log_probs)
-        T = len(sentence_tokens)
-        dp = np.zeros((N, T)) - np.inf #initialized to a low value as we have to find maximum
-        prev = np.zeros((N, T)) #backpointers
-
-        #initialization 
-        for state_idx in range(N):
-            word_idx = self.word_indexer.index_of(sentence_tokens[0].word)
-            if(word_idx == -1):
-               word_idx = self.word_indexer.index_of("UNK")
-            dp[state_idx,0] = self.init_log_probs[state_idx] + self.emission_log_probs[state_idx, word_idx]
-        
-        #forward
-        for t in range(1, T):
-            token = sentence_tokens[t]
-            word_idx = self.word_indexer.index_of(token.word)
-            if(word_idx == -1):
-               word_idx = self.word_indexer.index_of("UNK")
-               
-            for cur_state_idx in range(N):
-                tmp = dp[:, t-1] + self.transition_log_probs[:, cur_state_idx]
-                best_prev = tmp.argmax()
-                prev[cur_state_idx, t] = best_prev
-                dp[cur_state_idx, t] = tmp[best_prev] + self.emission_log_probs[cur_state_idx, word_idx]
-         
-        #backtracing
-        pred_tag_indexes = [] #will be stored in reverse order
-        temp_status = np.argmax(dp[:, -1])
-        pred_tag_indexes.append(temp_status)
-        
-        for t in range(T-1, 0, -1):
-           temp_status = prev[int(temp_status), t]
-           pred_tag_indexes.append(temp_status)
-        
-        pred_tag_indexes = pred_tag_indexes[::-1]
-        pred_tags = []
-
-        for tag_index in pred_tag_indexes:
-            pred_tags.append(self.tag_indexer.get_object(tag_index))
+    def forward(self, input):
+        """
+        :param input: either a non-batched input [sent len x voc size] or a batched input
+        [batch size x sent len x voc size]
+        :return: embedded form of the input words (last coordinate replaced by input_dim)
+        """
+        embedded_words = self.word_embedding(input)
+        final_embeddings = self.dropout(embedded_words)
+        return final_embeddings
 
 
-        assert len(pred_tags) == T
-        
-
-        # raise Exception("IMPLEMENT ME")
-        return LabeledSentence(sentence_tokens, chunks_from_bio_tag_seq(pred_tags))
-
-
-
-def train_hmm_model(sentences: List[LabeledSentence]) -> HmmNerModel:
+class RNNEncoder(nn.Module):
     """
-    Uses maximum-likelihood estimation to read an HMM off of a corpus of sentences.
-    Any word that only appears once in the corpus is replaced with UNK. A small amount
-    of additive smoothing is applied.
-    :param sentences: training corpus of LabeledSentence objects
-    :return: trained HmmNerModel
+    One-layer RNN encoder for batched inputs -- handles multiple sentences at once. To use in non-batched mode, call it
+    with a leading dimension of 1 (i.e., use batch size 1)
     """
-    # Index words and tags. We do this in advance so we know how big our
-    # matrices need to be.
-    tag_indexer = Indexer()
-    word_indexer = Indexer()
-    word_indexer.add_and_get_index("UNK")
-    word_counter = Counter()
-    for sentence in sentences:
-        for token in sentence.tokens:
-            word_counter[token.word] += 1.0
-    for sentence in sentences:
-        for token in sentence.tokens:
-            # If the word occurs fewer than two times, don't index it -- we'll treat it as UNK
-            get_word_index(word_indexer, word_counter, token.word)
-        for tag in sentence.get_bio_tags():
-            tag_indexer.add_and_get_index(tag)
-    # Count occurrences of initial tags, transitions, and emissions
-    # Apply additive smoothing to avoid log(0) / infinities / etc.
-    init_counts = np.zeros((len(tag_indexer)), dtype=float) + 0.0001
-    transition_counts = np.zeros((len(tag_indexer),len(tag_indexer)), dtype=float)  + 0.000000001
-    emission_counts = np.zeros((len(tag_indexer),len(word_indexer)), dtype=float)   + 0.0001
-    for sentence in sentences:
-        bio_tags = sentence.get_bio_tags()
-        for i in range(0, len(sentence)):
-            tag_idx = tag_indexer.add_and_get_index(bio_tags[i])
-            word_idx = get_word_index(word_indexer, word_counter, sentence.tokens[i].word)
-            emission_counts[tag_idx][word_idx] += 1.0
-            if i == 0:
-                init_counts[tag_idx] += 1.0
-            else:
-                transition_counts[tag_indexer.add_and_get_index(bio_tags[i-1])][tag_idx] += 1.0
-    # Turn counts into probabilities for initial tags, transitions, and emissions. All
-    # probabilities are stored as log probabilities
-    print(repr(init_counts))
-    init_counts = np.log(init_counts / init_counts.sum())
-    # transitions are stored as count[prev state][next state], so we sum over the second axis
-    # and normalize by that to get the right conditional probabilities
-    transition_counts = np.log(transition_counts / transition_counts.sum(axis=1)[:, np.newaxis])
-    # similar to transitions
-    emission_counts = np.log(emission_counts / emission_counts.sum(axis=1)[:, np.newaxis])
-    print("Tag indexer: %s" % tag_indexer)
-    print("Initial state log probabilities: %s" % init_counts)
-    print("Transition log probabilities: %s" % transition_counts)
-    print("Emission log probs too big to print...")
-    print("Emission log probs for India: %s" % emission_counts[:,word_indexer.add_and_get_index("India")])
-    print("Emission log probs for Phil: %s" % emission_counts[:,word_indexer.add_and_get_index("Phil")])
-    print("   note that these distributions don't normalize because it's p(word|tag) that normalizes, not p(tag|word)")
-    
-    return HmmNerModel(tag_indexer, word_indexer, init_counts, transition_counts, emission_counts)
+    def __init__(self, input_size: int, hidden_size: int, bidirect: bool):
+        """
+        :param input_size: size of word embeddings output by embedding layer
+        :param hidden_size: hidden size for the LSTM
+        :param bidirect: True if bidirectional, false otherwise
+        """
+        super(RNNEncoder, self).__init__()
+        self.bidirect = bidirect
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.reduce_h_W = nn.Linear(hidden_size * 2, hidden_size, bias=True)
+        self.reduce_c_W = nn.Linear(hidden_size * 2, hidden_size, bias=True)
+        self.rnn = nn.LSTM(input_size, hidden_size, num_layers=1, batch_first=True,
+                               dropout=0., bidirectional=self.bidirect)
+        self.init_weight()
 
+    def init_weight(self):
+        """
+        Initializes weight matrices using Xavier initialization
+        :return:
+        """
+        nn.init.xavier_uniform_(self.rnn.weight_hh_l0, gain=1)
+        nn.init.xavier_uniform_(self.rnn.weight_ih_l0, gain=1)
+        if self.bidirect:
+            nn.init.xavier_uniform_(self.rnn.weight_hh_l0_reverse, gain=1)
+            nn.init.xavier_uniform_(self.rnn.weight_ih_l0_reverse, gain=1)
+        nn.init.constant_(self.rnn.bias_hh_l0, 0)
+        nn.init.constant_(self.rnn.bias_ih_l0, 0)
+        if self.bidirect:
+            nn.init.constant_(self.rnn.bias_hh_l0_reverse, 0)
+            nn.init.constant_(self.rnn.bias_ih_l0_reverse, 0)
 
-def get_word_index(word_indexer: Indexer, word_counter: Counter, word: str) -> int:
-    """
-    Retrieves a word's index based on its count. If the word occurs only once, treat it as an "UNK" token
-    At test time, unknown words will be replaced by UNKs.
-    :param word_indexer: Indexer mapping words to indices for HMM featurization
-    :param word_counter: Counter containing word counts of training set
-    :param word: string word
-    :return: int of the word index
-    """
-    if word_counter[word] < 1.5:
-        return word_indexer.add_and_get_index("UNK")
-    else:
-        return word_indexer.add_and_get_index(word)
+    def get_output_size(self):
+        return self.hidden_size * 2 if self.bidirect else self.hidden_size
 
+    def sent_lens_to_mask(self, lens, max_length):
+        return torch.from_numpy(np.asarray([[1 if j < lens.data[i].item() else 0 for j in range(0, max_length)] for i in range(0, lens.shape[0])]))
 
-class CrfNerModel(object):
-    def __init__(self, tag_indexer, feature_indexer, crf_model):
-        self.tag_indexer = tag_indexer
-        self.feature_indexer = feature_indexer
-        self.model = crf_model
+    def forward(self, embedded_words, input_lens):
+        """
+        Runs the forward pass of the LSTM
+        :param embedded_words: [batch size x sent len x input dim] tensor
+        :param input_lens: [batch size]-length vector containing the length of each input sentence
+        :return: output (each word's representation), context_mask (a mask of 0s and 1s
+        reflecting where the model's output should be considered), and h_t, a *tuple* containing
+        the final states h and c from the encoder for each sentence.
+        """
+        # Takes the embedded sentences, "packs" them into an efficient Pytorch-internal representation
+        packed_embedding = nn.utils.rnn.pack_padded_sequence(embedded_words, input_lens, batch_first=True)
+        # Runs the RNN over each sequence. Returns output at each position as well as the last vectors of the RNN
+        # state for each sentence (first/last vectors for bidirectional)
+        output, hn = self.rnn(packed_embedding)
+        # Unpacks the Pytorch representation into normal tensors
+        output, sent_lens = nn.utils.rnn.pad_packed_sequence(output)
+        max_length = input_lens.data[0].item()
+        context_mask = self.sent_lens_to_mask(sent_lens, max_length)
 
-    def decode(self, sentence_tokens):
-        tag_indexer = self.tag_indexer
-        feature_indexer = self.feature_indexer
-
-        all_features = []
-        for word_idx in range(0, len(sentence_tokens)):
-            features = []
-            for tag_idx in range(0, len(tag_indexer)):
-                features.append(extract_emission_features(sentence_tokens,\
-                    word_idx, tag_indexer.get_object(tag_idx), feature_indexer, add_to_indexer=False))
-
-            all_features.append(features)
-        
-        # print(all_features)
-        all_features = np.array(all_features)
-        # print(all_features.shape)
-        best_tags = self.model(all_features)
-
-        
-        
-        pred_tags = []
-
-        for tag in best_tags:
-            if tag_indexer.get_object(tag) is None:
-                print(tag)
-                print(best_tags)
-                exit(0)
-            pred_tags.append(tag_indexer.get_object(tag))
-        
-        return LabeledSentence(sentence_tokens, chunks_from_bio_tag_seq(pred_tags))
-            
-
-
-# Trains a CrfNerModel on the given corpus of sentences.
-def train_crf_model(sentences):
-    tag_indexer = Indexer()
-    for sentence in sentences:
-        for tag in sentence.get_bio_tags():
-            tag_indexer.add_and_get_index(tag)
-    
-
-    feature_indexer_file = "feature_indexer.pkl"
-    feature_cache_file = "features.pkl"
-
-    if not os.path.isfile(feature_indexer_file) or not os.path.isfile(feature_cache_file):
-        print("Extracting features")
-        feature_indexer = Indexer()
-        feature_cache = [[[[] for k in range(0, len(tag_indexer))] for j in range(0, len(sentences[i]))] for i in range(0, len(sentences))]
-        for sentence_idx in range(0, len(sentences)):
-            if sentence_idx % 100 == 0:
-                print("Ex %i/%i" % (sentence_idx, len(sentences)))
-            for word_idx in range(0, len(sentences[sentence_idx])):
-                for tag_idx in range(0, len(tag_indexer)):
-                    feature_cache[sentence_idx][word_idx][tag_idx] = extract_emission_features(sentences[sentence_idx].tokens, word_idx, tag_indexer.get_object(tag_idx), feature_indexer, add_to_indexer=True)
-    
-        pickle.dump(feature_indexer, open(feature_indexer_file, "wb"))
-        pickle.dump(feature_cache, open(feature_cache_file, "wb"))
-    else:
-        print("Loading features")
-        feature_indexer = pickle.load(open(feature_indexer_file, "rb"))
-        feature_cache = pickle.load(open(feature_cache_file, "rb"))
-
-    lr = 0.01
-  
-
-    num_epochs = 3
-    train = True
-    if train:
-        crf_model = CRF(num_features = len(feature_indexer), nb_labels = len(tag_indexer), )
-        transmission_optimizer = optim.SGD([crf_model.transitions], lr=lr)
-        emmision_optimizer = optim.Adam([crf_model.emmision_weights], lr=lr)
-        for epoch in range(num_epochs):
-            total_loss = 0.0
-            total_count = 0.0
-            for sentence_idx in range(len(feature_cache)):
-                sentence = sentences[sentence_idx]
-                true_tags = []
-                for tag in sentence.get_bio_tags():
-                    true_tags.append(tag_indexer.index_of(tag))
-                x = np.array(feature_cache[sentence_idx])
-
-                true_tags  = np.expand_dims(np.array(true_tags), axis=0)
-
-                crf_model.zero_grad()
-                loss = crf_model.loss(x, true_tags)
-                total_loss += loss.item()
-                total_count += 1
-                loss.backward()
-                emmision_grads = crf_model
-                transmission_optimizer.step()
-                emmision_optimizer.step()
-
-                if(sentence_idx%100 == 0):
-                    print("epoch {} {}/{} done loss {}".format(epoch, sentence_idx, len(feature_cache), total_loss/total_count))
-
-                # if(sentence_idx == 2000):
-                #     break
-            print("epoch {}, loss {}".format(epoch, total_loss/total_count))
-            save_path = "model_crf_confirm.crf"
-            torch.save(crf_model, save_path)
-            print("model saved to {}".format(save_path))
-    else:
-        # print(tag_indexer.__repr__)
-        crf_model = torch.load("model.crf")
-
-    return CrfNerModel(tag_indexer, feature_indexer, crf_model)
-
-
-    # raise Exception("IMPLEMENT THE REST OF ME")
-
-
-def extract_emission_features(sentence_tokens: List[Token], word_index: int, tag: str, feature_indexer: Indexer, add_to_indexer: bool):
-    """
-    Extracts emission features for tagging the word at word_index with tag.
-    :param sentence_tokens: sentence to extract over
-    :param word_index: word index to consider
-    :param tag: the tag that we're featurizing for
-    :param feature_indexer: Indexer over features
-    :param add_to_indexer: boolean variable indicating whether we should be expanding the indexer or not. This should
-    be True at train time (since we want to learn weights for all features) and False at test time (to avoid creating
-    any features we don't have weights for).
-    :return: an ndarray
-    """
-    feats = []
-    curr_word = sentence_tokens[word_index].word
-    # Lexical and POS features on this word, the previous, and the next (Word-1, Word0, Word1)
-    for idx_offset in range(-1, 2):
-        if word_index + idx_offset < 0:
-            active_word = "<s>"
-        elif word_index + idx_offset >= len(sentence_tokens):
-            active_word = "</s>"
+        # Grabs the encoded representations out of hn, which is a weird tuple thing.
+        # Note: if you want multiple LSTM layers, you'll need to change this to consult the penultimate layer
+        # or gather representations from all layers.
+        if self.bidirect:
+            h, c = hn[0], hn[1]
+            # Grab the representations from forward and backward LSTMs
+            h_, c_ = torch.cat((h[0], h[1]), dim=1), torch.cat((c[0], c[1]), dim=1)
+            # Reduce them by multiplying by a weight matrix so that the hidden size sent to the decoder is the same
+            # as the hidden size in the encoder
+            new_h = self.reduce_h_W(h_)
+            new_c = self.reduce_c_W(c_)
+            h_t = (new_h, new_c)
         else:
-            active_word = sentence_tokens[word_index + idx_offset].word
-        if word_index + idx_offset < 0:
-            active_pos = "<S>"
-        elif word_index + idx_offset >= len(sentence_tokens):
-            active_pos = "</S>"
-        else:
-            active_pos = sentence_tokens[word_index + idx_offset].pos
-        maybe_add_feature(feats, feature_indexer, add_to_indexer, tag + ":Word" + repr(idx_offset) + "=" + active_word)
-        maybe_add_feature(feats, feature_indexer, add_to_indexer, tag + ":Pos" + repr(idx_offset) + "=" + active_pos)
-    # Character n-grams of the current word
-    max_ngram_size = 3
-    for ngram_size in range(1, max_ngram_size+1):
-        start_ngram = curr_word[0:min(ngram_size, len(curr_word))]
-        maybe_add_feature(feats, feature_indexer, add_to_indexer, tag + ":StartNgram=" + start_ngram)
-        end_ngram = curr_word[max(0, len(curr_word) - ngram_size):]
-        maybe_add_feature(feats, feature_indexer, add_to_indexer, tag + ":EndNgram=" + end_ngram)
-    # Look at a few word shape features
-    maybe_add_feature(feats, feature_indexer, add_to_indexer, tag + ":IsCap=" + repr(curr_word[0].isupper()))
-    # Compute word shape
-    new_word = []
-    for i in range(0, len(curr_word)):
-        if curr_word[i].isupper():
-            new_word += "X"
-        elif curr_word[i].islower():
-            new_word += "x"
-        elif curr_word[i].isdigit():
-            new_word += "0"
-        else:
-            new_word += "?"
-    maybe_add_feature(feats, feature_indexer, add_to_indexer, tag + ":WordShape=" + repr(new_word))
-    
-    while len(feats) < 14:
-        feats.append(0)
-    return np.asarray(feats, dtype=int)
-
+            h, c = hn[0][0], hn[1][0]
+            h_t = (h, c)
+        return (output, context_mask, h_t)
