@@ -76,12 +76,17 @@ class NearestNeighborSemanticParser(object):
 
 
 class Seq2SeqSemanticParser(object):
-    def __init__(self):
+    def __init__(self, input_embedding_layer, encoder, decoder):
         raise Exception("implement me!")
         # Add any args you need here
+        self.input_embedding_layer = input_embedding_layer
+        self.encoder = encoder
+        self.decoder = decoder
 
     def decode(self, test_data: List[Example]) -> List[List[Derivation]]:
         raise Exception("implement me!")
+
+    
 
 
 def make_padded_input_tensor(exs: List[Example], input_indexer: Indexer, max_len: int, reverse_input=False) -> np.ndarray:
@@ -115,7 +120,8 @@ def make_padded_output_tensor(exs, output_indexer, max_len):
     return np.array([[ex.y_indexed[i] if i < len(ex.y_indexed) else output_indexer.index_of(PAD_SYMBOL) for i in range(0, max_len)] for ex in exs])
 
 
-def encode_input_for_decoder(x_tensor, inp_lens_tensor, model_input_emb: EmbeddingLayer, model_enc: RNNEncoder):
+def encode_input_for_decoder(x_tensor, inp_lens_tensor, model_input_emb: 
+    EmbeddingLayer, model_enc: RNNEncoder):
     """
     Runs the encoder (input embedding layer and encoder as two separate modules) on a tensor of inputs x_tensor with
     inp_lens_tensor lengths.
@@ -171,6 +177,99 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
 
     # First create a model. Then loop over epochs, loop over examples, and given some indexed words, call
     # the encoder, call your decoder, accumulate losses, update parameters
+    
+
+    input_vocab_size = len(input_indexer)
+    output_vocab_size = len(output_indexer)
+    #Model
+    input_embedding_size = 50
+    output_embedding_size = 50
+    encoder_hidden_size = 64
+    decoder_hidden_size = 64
+    input_embedding_layer = EmbeddingLayer(input_embedding_size, input_vocab_size, 0)
+    encoder =  RNNEncoder(input_embedding_size, encoder_hidden_size)
+    decoder = Decoder(output_vocab_size, output_embedding_size, decoder_hidden_size)
+
+    #Optimizer
+    optimizer = optim.Adam(list(input_embedding_layer.parameters())\
+     + list(encoder.parameters()) + list(decoder.parameters()))
+
+    criterion = nn.CrossEntropyLoss(ignore_index = 0)
+
+    
+    #Hyper-params
+    batch_size = 64
+    num_epochs = 10
+    teacher_forcing_ratio  = 0.5
+
+    
+    for epoch in range(num_epochs):
+        total_loss = 0
+        total_count = 0
+        cursor = batch_size
+        while cursor < len(all_train_input_data):
+
+            optimizer.zero_grad()
+
+            input_batch = all_train_input_data[cursor-batch_size: cursor]
+            output_batch = all_train_output_data[cursor-batch_size: cursor]
+            inp_lens = np.sum(input_batch!=0, axis=1)
+
+            x_tensor = torch.from_numpy(input_batch).long()
+            inp_lens_tensor = torch.from_numpy(inp_lens).long()
+            out_tensor = torch.from_numpy(output_batch).long()
+
+            _, _, enc_output = encode_input_for_decoder(x_tensor, inp_lens_tensor, input_embedding_layer,\
+            encoder)
+
+            hidden, cell = enc_output
+            outputs = torch.zeros(output_max_len, batch_size, output_vocab_size)
+            input = torch.zeros((batch_size)).long()
+
+            for t in range(1, output_max_len):
+            
+                #insert input token embedding, previous hidden and previous cell states
+                #receive output tensor (predictions) and new hidden and cell states
+                output, hidden, cell = decoder(input, hidden, cell)
+                
+                #place predictions in a tensor holding predictions for each token
+                outputs[t] = output
+                
+                #decide if we are going to use teacher forcing or not
+                teacher_force = random.random() < teacher_forcing_ratio
+                
+                #get the highest predicted token from our predictions
+                top1 = output.argmax(1) 
+                
+                #if teacher forcing, use actual next token as next input
+                #if not, use predicted token
+                input = out_tensor[:,t] if teacher_force else top1
+
+            outputs.transpose_(0,1)
+
+            outputs = outputs.reshape(-1, outputs.shape[-1])
+            out_tensor = out_tensor.reshape(-1)
+
+
+            loss = criterion(outputs, out_tensor)
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+            total_count += 1
+            cursor += batch_size
+        print("loss at epoch {}: {}".format(epoch, total_loss/total_count))
+
+            
+            
+        
+
+            
+
+            
+    
+    
+
+
     raise Exception("Implement the rest of me to train your encoder-decoder model")
 
 

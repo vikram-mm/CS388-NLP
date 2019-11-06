@@ -42,7 +42,7 @@ class RNNEncoder(nn.Module):
     One-layer RNN encoder for batched inputs -- handles multiple sentences at once. To use in non-batched mode, call it
     with a leading dimension of 1 (i.e., use batch size 1)
     """
-    def __init__(self, input_size: int, hidden_size: int, bidirect: bool):
+    def __init__(self, input_size: int, hidden_size: int, bidirect: bool = False):
         """
         :param input_size: size of word embeddings output by embedding layer
         :param hidden_size: hidden size for the LSTM
@@ -115,3 +115,54 @@ class RNNEncoder(nn.Module):
             h, c = hn[0][0], hn[1][0]
             h_t = (h, c)
         return (output, context_mask, h_t)
+
+class Decoder(nn.Module):
+    def __init__(self, output_dim, emb_dim, hid_dim, n_layers=1, dropout=0):
+        super().__init__()
+        
+        self.output_dim = output_dim
+        self.hid_dim = hid_dim
+        self.n_layers = n_layers
+        
+        self.embedding = nn.Embedding(output_dim, emb_dim)
+        
+        self.rnn = nn.LSTM(emb_dim, hid_dim, n_layers, dropout = dropout)
+        
+        self.out = nn.Linear(hid_dim, output_dim)
+        
+        self.dropout = nn.Dropout(dropout)
+        
+    def forward(self, input, hidden, cell):
+        
+        #input = [batch size]
+        #hidden = [n layers * n directions, batch size, hid dim]
+        #cell = [n layers * n directions, batch size, hid dim]
+        
+        #n directions in the decoder will both always be 1, therefore:
+        #hidden = [n layers, batch size, hid dim]
+        #context = [n layers, batch size, hid dim]
+        
+        input = input.unsqueeze(0)
+        
+        #input = [1, batch size]
+        
+        embedded = self.dropout(self.embedding(input))
+        
+        #embedded = [1, batch size, emb dim]
+                
+        output, (hidden, cell) = self.rnn(embedded, (hidden, cell))
+        
+        #output = [sent len, batch size, hid dim * n directions]
+        #hidden = [n layers * n directions, batch size, hid dim]
+        #cell = [n layers * n directions, batch size, hid dim]
+        
+        #sent len and n directions will always be 1 in the decoder, therefore:
+        #output = [1, batch size, hid dim]
+        #hidden = [n layers, batch size, hid dim]
+        #cell = [n layers, batch size, hid dim]
+        
+        prediction = self.out(output.squeeze(0))
+        
+        #prediction = [batch size, output dim]
+        
+        return prediction, hidden, cell
