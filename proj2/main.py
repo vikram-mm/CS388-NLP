@@ -10,6 +10,11 @@ from data import *
 from utils import *
 from typing import List
 
+random.seed(11)
+np.random.seed(11)
+torch.manual_seed(11)
+
+
 def _parse_args():
     """
     Command-line arguments to the system. --model switches between the main modes you'll need to use. The other arguments
@@ -72,19 +77,57 @@ class NearestNeighborSemanticParser(object):
                     best_train_ex = train_ex
             # N.B. a list!
             test_derivs.append([Derivation(test_ex, 1.0, best_train_ex.y_tok)])
+
+        # print(test_derivs)
+        # exit(0)
         return test_derivs
 
 
 class Seq2SeqSemanticParser(object):
-    def __init__(self, input_embedding_layer, encoder, decoder):
-        raise Exception("implement me!")
+    def __init__(self, input_embedding_layer, encoder, decoder, output_indexer):
+        # raise Exception("implement me!")
         # Add any args you need here
         self.input_embedding_layer = input_embedding_layer
         self.encoder = encoder
         self.decoder = decoder
+        self.output_indexer = output_indexer
 
     def decode(self, test_data: List[Example]) -> List[List[Derivation]]:
-        raise Exception("implement me!")
+
+        # raise Exception("implement me!")
+        ans  = []
+        for i, ex in enumerate(test_data):
+            pred_tokens = []
+            input_batch = np.array([ex.x_indexed])
+            inp_lens = np.sum(input_batch!=0, axis=1)
+            x_tensor = torch.from_numpy(input_batch).long()
+            inp_lens_tensor = torch.from_numpy(inp_lens).long()
+            _, _, enc_output = encode_input_for_decoder(x_tensor,\
+             inp_lens_tensor, self.input_embedding_layer,\
+            self.encoder)
+            hidden, cell = enc_output
+            input = torch.ones((1)).long()
+            token = "<SOS>"
+            count  = 0
+            while token != "<EOS>" and count<70:
+                count += 1
+                output, hidden, cell = self.decoder(input, hidden, cell)
+                top1 = output.argmax(1) 
+                input = top1
+                # print(input.item())
+                token = output_indexer.get_object(input.item())
+                prob = output.max().item()
+                if token != "<EOS>":
+                    pred_tokens.append(token)
+            ans.append([Derivation(ex, 1.0, pred_tokens)])
+
+            print("{}/{} done".format(i+1, len(test_data)))
+        
+        return ans
+            
+
+            
+
 
     
 
@@ -182,10 +225,10 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
     input_vocab_size = len(input_indexer)
     output_vocab_size = len(output_indexer)
     #Model
-    input_embedding_size = 50
-    output_embedding_size = 50
-    encoder_hidden_size = 64
-    decoder_hidden_size = 64
+    input_embedding_size = 300
+    output_embedding_size = 300
+    encoder_hidden_size = 200
+    decoder_hidden_size = 200
     input_embedding_layer = EmbeddingLayer(input_embedding_size, input_vocab_size, 0)
     encoder =  RNNEncoder(input_embedding_size, encoder_hidden_size)
     decoder = Decoder(output_vocab_size, output_embedding_size, decoder_hidden_size)
@@ -198,15 +241,18 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
 
     
     #Hyper-params
-    batch_size = 64
-    num_epochs = 10
+    batch_size = 2
+    num_epochs = 15
     teacher_forcing_ratio  = 0.5
 
+    print("SOS index : ",output_indexer.index_of("<SOS>"))
+    
     
     for epoch in range(num_epochs):
         total_loss = 0
         total_count = 0
         cursor = batch_size
+        # teacher_forcing_ratio *= 0.9
         while cursor < len(all_train_input_data):
 
             optimizer.zero_grad()
@@ -219,14 +265,17 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
             inp_lens_tensor = torch.from_numpy(inp_lens).long()
             out_tensor = torch.from_numpy(output_batch).long()
 
+            # print(out)
+
             _, _, enc_output = encode_input_for_decoder(x_tensor, inp_lens_tensor, input_embedding_layer,\
             encoder)
 
             hidden, cell = enc_output
-            outputs = torch.zeros(output_max_len, batch_size, output_vocab_size)
-            input = torch.zeros((batch_size)).long()
 
-            for t in range(1, output_max_len):
+            outputs = torch.zeros(output_max_len, batch_size, output_vocab_size)
+            input = torch.ones((batch_size)).long()
+
+            for t in range(0, output_max_len):
             
                 #insert input token embedding, previous hidden and previous cell states
                 #receive output tensor (predictions) and new hidden and cell states
@@ -250,27 +299,17 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
             outputs = outputs.reshape(-1, outputs.shape[-1])
             out_tensor = out_tensor.reshape(-1)
 
-
             loss = criterion(outputs, out_tensor)
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
             total_count += 1
             cursor += batch_size
-        print("loss at epoch {}: {}".format(epoch, total_loss/total_count))
-
-            
-            
-        
-
-            
-
-            
+        print("loss at epoch {}: {}".format(epoch, total_loss/total_count)) 
     
-    
+    return Seq2SeqSemanticParser(input_embedding_layer, encoder, decoder, output_indexer)
 
-
-    raise Exception("Implement the rest of me to train your encoder-decoder model")
+    # raise Exception("Implement the rest of me to train your encoder-decoder model")
 
 
 def evaluate(test_data: List[Example], decoder, example_freq=50, print_output=True, outfile=None):
@@ -289,6 +328,14 @@ def evaluate(test_data: List[Example], decoder, example_freq=50, print_output=Tr
     e = GeoqueryDomain()
     pred_derivations = decoder.decode(test_data)
     java_crashes = False
+
+    # for true, pred in zip([ex.y for ex in test_data], pred_derivations):
+    #     print(true)
+    #     print(pred)
+    #     print('-----')
+
+    # exit(0)
+
     if java_crashes:
         selected_derivs = [derivs[0] for derivs in pred_derivations]
         denotation_correct = [False for derivs in pred_derivations]
@@ -323,6 +370,8 @@ if __name__ == '__main__':
         evaluate(dev_data_indexed, decoder)
     else:
         decoder = train_model_encdec(train_data_indexed, dev_data_indexed, input_indexer, output_indexer, args)
+        evaluate(dev_data_indexed, decoder)
+    exit(0)
     print("=======FINAL EVALUATION ON BLIND TEST=======")
     evaluate(test_data_indexed, decoder, print_output=False, outfile="geo_test_output.tsv")
 

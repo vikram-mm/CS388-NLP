@@ -45,12 +45,20 @@ class GeoqueryDomain(object):
     def postprocess_lf(self, lf):
         # Undo the variable name standardization.
         cur_var = chr(ord('A') - 1)
+        
+        # lf = lf.replace("N V", "NV") #to avoid some error
+        # print(lf)
         toks = lf.split(' ')
+        # print(toks)
         new_toks = []
+        
         for w in toks:
+            # print(w)
             if w == 'NV':
                 cur_var = chr(ord(cur_var) + 1)
                 new_toks.append(cur_var)
+            # elif w == "V":
+            #     continue
             elif w.startswith('V'):
                 ind = int(w[1:])
                 new_toks.append(chr(ord(cur_var) - ind))

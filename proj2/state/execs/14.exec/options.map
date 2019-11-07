@@ -1,0 +1,118 @@
+server.port	8400
+server.logPath	
+server.collapseDetails	false
+server.propertiesPath	
+server.numThreads	4
+server.basePath	www
+data.random	1
+data.verbose	0
+data.maxSentenceLength	2147483647
+data.generalPaths	evaluator/domains/dbquery/geoquery/1/geoquery.dlog evaluator/domains/dbquery/geoquery/1/lexicon.dlog /tmp/tmpjuxjvpwa.dlog
+data.trainPaths	
+data.testPaths	
+data.generalMaxExamples	MAX
+data.trainMaxExamples	2147483647
+data.testMaxExamples	2147483647
+data.trainFrac	0.7
+data.testFrac	0.3
+data.permuteExamples	true
+data.generalExampleOffset	0
+parser.command	bash lib/lowercase-parser
+parser.cachedPath	
+parser.lowercase	true
+log.maxIndLevel	10
+log.msPerLine	0
+log.file	/home/vikram/NLP-/proj2/state/execs/14.exec/log
+log.stdout	true
+log.note	
+log.forcePrint	false
+log.maxPrintErrors	10000
+learn.random	1
+learn.permuteExamples	false
+learn.randTrainOrder	false
+learn.stepSizeReductionPower	0.0
+learn.maxOutput	2147483647
+learn.passiveAggressive	false
+learn.marginProb	0.7
+learn.maxNudgeSteps	1
+learn.updateType	full
+learn.regularization	0.01
+learn.numIters	5
+learn.useAdaptiveGrad	false
+learn.initStepSize	1.0
+learn.miniBatchSize	MAX
+learn.lbfgs.historySize	5
+main.debug	false
+main.launchParser	false
+main.startServer	false
+main.interactive	false
+model.timeout	0
+model.verbose	2
+model.posTagDictPath	
+model.lexToTime	false
+model.dlogOptions	lexMode=0
+model.pruneErrDen	false
+model.pruneInfDen	false
+model.forceRightBranching	false
+model.forceParseSyntax	false
+model.beamSize	100
+model.autoUpdate	false
+model.useBayesianAveraging	true
+model.allowDelayedExtraction	false
+model.implicit1k	false
+model.implicitk1	false
+model.allowNonProjectivity	false
+model.allowTroll	true
+model.usePosOnlyIfNoMatches	false
+model.usePosOnlyIfNoPhraseMatches	false
+model.learnLexicon	false
+model.oldAttach	false
+model.useSyntax	true
+model.pruneEmptyDen	false
+model.features	pred pred2 predarg lexpred lexnull
+model.lexiconPruneThreshold	1.0E-4
+model.hackComparatives	false
+model.lexToName	true
+model.lexToSetWithName	true
+model.lexToObjWithName	true
+model.normPhrasePrefixLen	2147483647
+model.inParamsPath	
+model.outParamsPath	
+model.outBasketsPath	
+exec.create	true
+exec.monitor	true
+exec.execDir	
+exec.execPoolDir	/home/vikram/NLP-/proj2/state/execs
+exec.actualExecPoolDir	
+exec.overwriteExecDir	false
+exec.useStandardExecPoolDirStrategy	true
+exec.printOptionsAndExit	false
+exec.miscOptions	new4
+exec.addToView	geo3
+exec.recordPath	
+exec.charEncoding	
+exec.jarFiles	evaluator/evaluator.jar
+exec.dontInitializeJars	false
+exec.initializeJarsAfterDirCreation	false
+exec.makeThunk	false
+exec.thunkAutoQueue	false
+exec.thunkPriority	0
+exec.thunkMainClassName	
+exec.thunkJavaOpts	
+exec.thunkReqMemory	1024
+exec.dontCatchExceptions	false
+int.random	1
+int.verbose	0
+int.displayTypes	false
+int.displayDens	false
+int.displaySpans	false
+int.prettyMaxSetSize	10
+int.crashOnTypeError	false
+int.maxCost	100000
+int.displayMaxSetSize	1
+int.roundNumDigits	2147483647
+learn.backtrack.stepSizeDecrFactor	0.9
+learn.backtrack.stepSizeIncrFactor	1.3
+learn.backtrack.maxTries	100
+learn.backtrack.tolerance	1.0E-5
+learn.backtrack.initStepSize	1.0

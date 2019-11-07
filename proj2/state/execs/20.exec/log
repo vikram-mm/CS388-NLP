@@ -1,0 +1,513 @@
+main() {
+  Execution directory: /home/vikram/NLP-/proj2/state/execs/20.exec
+  DataManager.loadExamples {
+    Reading general {
+      Path: evaluator/domains/dbquery/geoquery/1/geoquery.dlog {
+        Parsing evaluator/domains/dbquery/geoquery/1/geoquery.dlog
+        89 statements
+        Parsing evaluator/domains/dbquery/geoquery/1/../../general/predicates.dlog
+        49 statements
+        Parsing evaluator/domains/dbquery/geoquery/1/geobase.dlog
+        698 statements
+      } [1.9s, cum. 1.9s]
+      Path: evaluator/domains/dbquery/geoquery/1/lexicon.dlog {
+        Parsing evaluator/domains/dbquery/geoquery/1/lexicon.dlog
+        5 statements
+        Parsing evaluator/domains/dbquery/geoquery/1/../../general/lexicon.dlog
+        31 statements
+        Parsing evaluator/domains/dbquery/geoquery/1/lexicon0.dlog
+        5 statements
+      }
+      Path: /tmp/tmp2ksr3mg9.dlog {
+        Parsing /tmp/tmp2ksr3mg9.dlog {
+          DatalogParser.loadSafe(): start
+          _parse([query], answer(A,(major(A),city(A),loc(A,B),state(B),river(C),loc(C,D),const(D,stateid(virginia)),traverse(C,B)))).
+          _parse([query], answer(A,(capital(A),loc(A,B),state(B),next_to(B,C),state(C),next_to(C,D),const(D,stateid(texas))))).
+          _parse([query], answer(A,(river(A),traverse(A,B),largest(C,(state(B),loc(C,B),city(C),loc(C,D),const(D,countryid(usa))))))).
+          _parse([query], answer(A,largest(A,(state(A),const(B,riverid("rio grande")),traverse(B,A))))).
+          _parse([query], answer(A,(state(A),place(B),loc(B,A),higher(B,C),highest(C,(place(C),loc(C,D),const(D,stateid(texas))))))).
+          _parse([query], answer(A,lowest(B,(state(A),traverse(C,A),const(C,riverid(mississippi)),loc(B,A),place(B))))).
+          _parse([query], answer(A,(state(A),next_to(B,A),largest(C,(state(B),population(B,C)))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),state(B),next_to(B,C),largest(D,(state(C),population(C,D)))))).
+          _parse([query], answer(A,(state(A),loc(B,A),highest(B,(place(B),loc(B,C),const(C,countryid(usa))))))).
+          _parse([query], answer(A,(population(B,A),largest(C,(state(B),area(B,C)))))).
+          _parse([query], answer(A,(elevation(B,A),highest(B,(place(B),loc(B,C),const(C,countryid(usa))))))).
+          _parse([query], answer(A,count(B,(river(B),loc(B,C),state(C),loc(D,C),highest(D,place(D))),A))).
+          _parse([query], answer(A,(population(B,A),capital(B),loc(B,C),smallest(C,state(C))))).
+          _parse([query], answer(A,smallest(A,(state(A),longest(B,river(B)),traverse(B,A))))).
+          _parse([query], answer(A,(state(A),loc(B,A),place(B),higher(B,C),highest(C,(place(C),loc(C,D),const(D,stateid(colorado))))))).
+          _parse([query], answer(A,(population(B,A),smallest(B,(state(B),next_to(B,C),const(C,stateid(wyoming))))))).
+          _parse([query], answer(A,longest(A,(river(A),traverse(A,B),const(B,countryid(usa)))))).
+          _parse([query], answer(A,(density(B,A),const(B,stateid(pennsylvania))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),state(B),next_to(B,C),state(C),next_to(C,D),const(D,stateid(florida))))).
+          _parse([query], answer(A,(capital(A),loc(A,B),state(B),next_to(B,C),const(C,stateid(texas))))).
+          _parse([query], answer(A,(elevation(B,A),highest(B,(place(B),loc(B,C),state(C)))))).
+          _parse([query], answer(A,(major(A),city(A),loc(A,B),const(B,stateid(illinois))))).
+          _parse([query], answer(A,highest(B,(state(A),loc(B,A),mountain(B))))).
+          _parse([query], answer(A,sum(B,state(B),population(B),A))).
+          _parse([query], answer(A,(river(A),loc(A,B),state(B),const(B,stateid(indiana))))).
+          _parse([query], answer(A,(state(A),most(A,B,(state(A),loc(B,A),river(B)))))).
+          _parse([query], answer(A,largest(B,(city(A),loc(A,C),const(C,stateid(minnesota)),population(A,B))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),most(B,C,(state(B),loc(C,B),city(C)))))).
+          _parse([query], answer(A,(state(A),const(B,riverid(potomac)),traverse(B,A)))).
+          _parse([query], answer(A,longest(A,(river(A),traverse(A,B),const(B,stateid("new york")))))).
+          _parse([query], answer(A,count(B,(major(B),city(B),loc(B,C),state(C),next_to(C,D),const(D,stateid(nebraska))),A))).
+          _parse([query], answer(A,largest(B,(state(A),density(A,B))))).
+          _parse([query], answer(A,(state(A),loc(B,A),largest(C,(city(B),population(B,C)))))).
+          _parse([query], answer(A,count(B,(state(B),const(C,riverid(colorado)),river(C),traverse(C,B)),A))).
+          _parse([query], answer(A,smallest(A,(city(A),loc(A,B),largest(B,state(B)))))).
+          _parse([query], answer(A,smallest(B,(state(A),area(A,B),next_to(A,C),const(C,stateid(texas)))))).
+          _parse([query], answer(A,(high_point(B,A),loc(A,B),state(B),next_to(B,C),const(C,stateid(mississippi))))).
+          _parse([query], answer(A,longest(A,(river(A),loc(A,B),const(B,countryid(usa)))))).
+          _parse([query], answer(A,highest(A,(place(A),loc(A,B),smallest(B,state(B)))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),smallest(C,(state(B),population(B,C)))))).
+          _parse([query], answer(A,count(B,(state(B),next_to(B,C),major(C),river(C)),A))).
+          _parse([query], answer(A,(elevation(B,A),highest(B,(place(B),loc(B,C),const(C,stateid(montana))))))).
+          _parse([query], answer(A,lowest(A,(place(A),loc(A,B),const(B,countryid(usa)))))).
+          _parse([query], answer(A,largest(B,(population(A,B),city(A),loc(A,C),const(C,stateid(wyoming)))))).
+          _parse([query], answer(A,(population(B,A),const(B,cityid(springfield,sd))))).
+          _parse([query], answer(A,(state(A),const(B,riverid(mississippi)),river(B),traverse(B,A)))).
+          _parse([query], answer(A,(population(B,A),largest(B,state(B))))).
+          _parse([query], answer(A,count(B,(state(B),loc(C,B),const(C,cityid(rochester,_))),A))).
+          _parse([query], answer(A,(area(B,A),const(B,countryid(usa))))).
+          _parse([query], answer(A,smallest(B,(city(A),population(A,B))))).
+          _parse([query], answer(A,(elevation(B,A),highest(B,(place(B),loc(B,C),const(C,stateid(louisiana))))))).
+          _parse([query], answer(A,(lake(A),loc(A,B),state(B),next_to(B,C),const(C,stateid(texas))))).
+          _parse([query], answer(A,highest(A,(place(A),loc(A,B),const(B,countryid(usa)))))).
+          _parse([query], answer(A,longest(A,(river(A),loc(A,B),const(B,countryid(usa)))))).
+          _parse([query], answer(A,count(B,(river(B),loc(B,C),const(C,countryid(usa))),A))).
+          _parse([query], answer(A,largest(B,(state(A),density(A,B))))).
+          _parse([query], answer(A,(population(B,A),const(B,cityid(atlanta,_))))).
+          _parse([query], answer(A,highest(A,(mountain(A),loc(A,B),const(B,stateid(alaska)))))).
+          _parse([query], answer(A,largest(B,(state(A),density(A,B))))).
+          _parse([query], answer(A,(major(A),city(A),loc(A,B),const(B,stateid(oklahoma))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid(iowa))))).
+          _parse([query], answer(A,count(B,(city(B),loc(B,C),const(C,countryid(usa))),A))).
+          _parse([query], answer(A,(major(A),city(A),loc(A,B),const(B,stateid(missouri))))).
+          _parse([query], answer(A,(area(B,A),const(B,stateid("south carolina"))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid("rhode island"))))).
+          _parse([query], answer(A,count(B,(river(B),loc(B,C),const(C,stateid("new york"))),A))).
+          _parse([query], answer(A,(major(A),city(A),loc(A,B),const(B,stateid(ohio))))).
+          _parse([query], answer(A,(state(A),loc(B,A),river(B),traverse(B,A)))).
+          _parse([query], answer(A,shortest(A,(river(A),loc(A,B),const(B,stateid(texas)))))).
+          _parse([query], answer(A,highest(A,(place(A),loc(A,B),const(B,stateid(montana)))))).
+          _parse([query], answer(A,highest(A,(place(A),loc(A,B),const(B,stateid(texas)))))).
+          _parse([query], answer(A,smallest(B,(state(A),density(A,B))))).
+          _parse([query], answer(A,count(B,(city(B),loc(B,C),const(C,countryid(usa))),A))).
+          _parse([query], answer(A,largest(A,(state(A),next_to(A,B),const(B,stateid(texas)))))).
+          _parse([query], answer(A,(next_to(A,B),state(A),const(B,stateid(michigan))))).
+          _parse([query], answer(A,lowest(A,(place(A),loc(A,B),const(B,stateid(california)))))).
+          _parse([query], answer(A,(state(A),const(B,riverid(mississippi)),traverse(B,A)))).
+          _parse([query], answer(A,most(A,B,(river(A),traverse(A,B),state(B))))).
+          _parse([query], answer(A,(state(A),const(B,cityid("des moines",_)),loc(B,A)))).
+          _parse([query], answer(A,(major(A),city(A),loc(A,B),const(B,stateid(texas))))).
+          _parse([query], answer(A,(population(B,A),const(B,cityid(sacramento,_))))).
+          _parse([query], answer(A,smallest(B,(state(A),population(A,B))))).
+          _parse([query], answer(A,count(B,(river(B),loc(B,C),const(C,stateid(missouri))),A))).
+          _parse([query], answer(A,(loc(B,A),state(A),const(B,placeid("mount mckinley"))))).
+          _parse([query], answer(A,largest(B,(state(A),loc(B,A),city(B))))).
+          _parse([query], answer(A,count(B,(river(B),loc(B,C),const(C,stateid(colorado))),A))).
+          _parse([query], answer(A,(major(A),river(A),loc(A,B),const(B,stateid(texas))))).
+          _parse([query], answer(A,(city(A),loc(A,B),const(B,stateid(virginia))))).
+          _parse([query], answer(A,count(B,(major(B),city(B)),A))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid(montana))))).
+          _parse([query], answer(A,(state(A),loc(B,A),const(B,riverid(red)),river(B)))).
+          _parse([query], answer(A,(river(A),loc(A,B),const(B,stateid("new mexico"))))).
+          _parse([query], answer(A,(city(A),loc(A,B),const(B,stateid(california))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid(hawaii))))).
+          _parse([query], answer(A,(capital(A),loc(A,B),const(B,stateid(hawaii))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid(california))))).
+          _parse([query], answer(A,(capital(A),loc(A,B),const(B,stateid(utah))))).
+          _parse([query], answer(A,(capital(A),loc(A,B),const(B,stateid(texas))))).
+          _parse([query], answer(A,(capital(A),loc(A,B),const(B,stateid(georgia))))).
+          _parse([query], answer(A,(state(A),\+(next_to(A,B),const(B,stateid(texas)))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid(utah))))).
+          _parse([query], answer(A,(area(B,A),const(B,cityid(seattle,_))))).
+          _parse([query], answer(A,fewest(A,B,(state(A),next_to(A,B),state(B))))).
+          _parse([query], answer(A,(len(B,A),const(B,riverid("rio grande"))))).
+          _parse([query], answer(A,(state(A),capital(A,B),const(B,cityid(dover,_))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid("new york"))))).
+          _parse([query], answer(A,longest(A,river(A)))).
+          _parse([query], answer(A,largest(A,state(A)))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(hawaii))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(florida))))).
+          _parse([query], answer(A,largest(A,city(A)))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(texas))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(delaware))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(kentucky))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(iowa))))).
+          _parse([query], answer(A,(loc(B,A),const(B,cityid("new orleans",_))))).
+          _parse([query], answer(A,(loc(B,A),const(B,stateid(massachusetts))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(iowa))))).
+          _parse([query], answer(A,(loc(B,A),const(B,cityid(indianapolis,_))))).
+          _parse([query], answer(A,(loc(B,A),const(B,cityid(austin,_))))).
+          _parse([query], answer(A,(major(A),city(A),loc(A,B),const(B,C),const(C,stateid(colorado)),traverse(C,B),river(C))))).
+          _parse([query], answer(A,(capital(A),loc(A,B),const(B,C),const(C,D),const(D,stateid(colorado))))).
+          _parse([query], answer(A,(river(A),traverse(A,B),const(B,C),const(C,,loc(C,D),const(D,stateid()))))).
+          _parse([query], answer(A,largest(B,(state(A),const(B,riverid(mississippi)),river(B))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,riverid(mississippi)),river(B)))).
+          _parse([query], answer(A,(state(A),next_to(B,A),const(B,cityid())))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(colorado))),@))).
+          _parse([query], answer(A,(state(A),next_to(A,B),state(A),next_to(B,C),const(C,stateid())))).
+          _parse([query], answer(A,highest(A,(place(A),loc(A,B),const(B,stateid()))))).
+          _parse([query], answer(A,(population(B,A),const(B,cityid())))).
+          _parse([query], answer(A,(elevation(B,A),const(B,cityid())))).
+          _parse([query], answer(A,count(B,(river(B),loc(B,C),const(C,cityid()))))).
+          _parse([query], answer(A,(population(B,A),const(B,cityid())))).
+          _parse([query], answer(A,largest(A,state(A),next_to(A,B),const(B,stateid())))).
+          _parse([query], answer(A,(state(A),const(B,riverid(mississippi)),river(B)))).
+          _parse([query], answer(A,(size(B,A),const(B,riverid(mississippi)),river(B)))).
+          _parse([query], answer(A,longest(A,(river(A),traverse(A,B),const(B,stateid(alaska)))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid())))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,C),const(C,D),const(D,stateid(colorado))))).
+          _parse([query], answer(A,(capital(A),loc(A,B),const(B,stateid(colorado))))).
+          _parse([query], answer(A,count(B,(river(B),traverse(B,C),const(C,stateid(colorado)),traverse(C,B))))).
+          _parse([query], answer(A,(major(A),city(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,largest(B,(state(A),population(A,B),loc(B,A),const(B,stateid()))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid())))).
+          _parse([query], answer(A,(river(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,largest(A,state(@),next_to(@,A),next_to(A,@))))).
+          _parse([query], answer(A,largest(B,(city(A),loc(B,C),const(C,stateid(alaska)))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,C),const(C,stateid(colorado))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,longest(A,(river(A),traverse(A,B),const(B,stateid()))))).
+          _parse([query], answer(A,count(B,(major(B),city(B),loc(B,C),const(C,stateid(alaska))),A))).
+          _parse([query], answer(A,largest(B,(state(A),const(B,stateid(alaska)))))).
+          _parse([query], answer(A,largest(B,(state(A),population(A,B),)(B,A))))).
+          _parse([query], answer(A,count(B,(state(B),next_to(B,C),const(C,stateid(colorado)),traverse(C,B)),traverse(C,B)))).
+          _parse([query], answer(A,largest(A,(city(A),loc(A,B),const(B,stateid(alaska)))))).
+          _parse([query], answer(A,largest(B,(state(A),const(B,riverid(mississippi)))))).
+          _parse([query], answer(A,highest(A,(place(A),loc(A,B),const(B,stateid(alaska)))))).
+          _parse([query], answer(A,longest(A,(river(A),loc(A,B),const(B,stateid(alaska)))))).
+          _parse([query], answer(A,highest(A,(place(A),loc(A,B),const(B,stateid()))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(colorado))))).
+          _parse([query], answer(A,count(B,(state(B),next_to(B,C),const(C,stateid(colorado))),traverse(C,B)))).
+          _parse([query], answer(A,(size(B,A),const(B,cityid())))).
+          _parse([query], answer(A,highest(A,(place(A),loc(A,B),const(B,stateid()))))).
+          _parse([query], answer(A,largest(B,(population(A,B),next_to(B,C),const(C,stateid()))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid())))).
+          _parse([query], answer(A,(state(A),const(B,riverid(mississippi)),river(B)))).
+          _parse([query], answer(A,(population(B,A),const(B,cityid())))).
+          _parse([query], answer(A,count(B,(state(B),next_to(B,C),const(C,stateid()))))).
+          _parse([query], answer(A,largest(B,(state(A),const(B,stateid(alaska)))))).
+          _parse([query], answer(A,largest(A,(city(A))))).
+          _parse([query], answer(A,(size(B,A),const(B,cityid())))).
+          _parse([query], answer(A,((A,,((A),loc(A,B),const(B,stateid(alaska))))))).
+          _parse([query], answer(A,highest(A,(place(A),loc(A,B),const(B,stateid()))))).
+          _parse([query], answer(A,longest(A,(river(A),loc(A,B),const(B,stateid(alaska)))))).
+          _parse([query], answer(A,count(B,(river(B),loc(B,C),const(C,stateid()))))).
+          _parse([query], answer(A,largest(B,(state(A),population(A,B))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid())))).
+          _parse([query], answer(A,highest(A,(place(A),loc(A,B),const(B,stateid(alaska)))))).
+          _parse([query], answer(A,largest(B,(state(A),population(A,B))))).
+          _parse([query], answer(A,(major(A),city(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid())))).
+          _parse([query], answer(A,count(B,(city(B),loc(B,C),const(C,stateid()))))).
+          _parse([query], answer(A,(major(A),city(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(size(B,A),const(B,stateid())))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid())))).
+          _parse([query], answer(A,count(B,(river(B),loc(B,C),const(C,stateid()))))).
+          _parse([query], answer(A,(major(A),city(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(colorado))))).
+          _parse([query], answer(A,shortest(A,river(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,((A,(place(A),loc(A,B),const(B,stateid(alaska))))))).
+          _parse([query], answer(A,highest(A,(place(A),loc(A,B),const(B,stateid(alaska)))))).
+          _parse([query], answer(A,largest(B,(state(A),const(B,stateid(alaska)))))).
+          _parse([query], answer(A,count(B,(city(B),loc(B,C),const(C,stateid()))))).
+          _parse([query], answer(A,largest(A,state(A),next_to(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,lowest(A,(place(A),loc(A,B),const(B,stateid(alaska)))))).
+          _parse([query], answer(A,(state(A),const(B,riverid(mississippi)),river(B)))).
+          _parse([query], answer(A,most(A,B,(river(A),loc(B,C),const(C,stateid()))))).
+          _parse([query], answer(A,(state(A),const(B,cityid())))).
+          _parse([query], answer(A,(major(A),city(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid())))).
+          _parse([query], answer(A,largest(B,(state(A),population(A,B))))).
+          _parse([query], answer(A,count(B,(river(B),loc(B,C),const(C,stateid()))))).
+          _parse([query], answer(A,(size(B,A),const(B,cityid())))).
+          _parse([query], answer(A,largest(A,state(@),next_to(A,@),)(A,)))).
+          _parse([query], answer(A,count(B,(river(B),loc(B,C),const(C,stateid()))))).
+          _parse([query], answer(A,(major(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(city(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,count(B,(major(B),next_to(B,C),const(C,stateid(colorado))),A))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid())))).
+          _parse([query], answer(A,largest(B,(state(A),next_to(B,A),next_to(B,A))))).
+          _parse([query], answer(A,(river(A),loc(A,B),const(B,stateid())))).
+          _parse([query], answer(A,(city(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid())))).
+          _parse([query], answer(A,(capital(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid())))).
+          _parse([query], answer(A,(capital(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(capital(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(capital(A),loc(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(population(B,A),const(B,stateid())))).
+          _parse([query], answer(A,(size(B,A),const(B,stateid())))).
+          _parse([query], answer(A,largest(A,state(@),next_to(A,@))))).
+          _parse([query], answer(A,(size(B,A),const(B,stateid())))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid())))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid())))).
+          _parse([query], answer(A,longest(A,river(A)))).
+          _parse([query], answer(A,largest(A,state(A)))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid())))).
+          _parse([query], answer(A,largest(A,state(A)))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(loc(B,A),const(B,cityid())))).
+          _parse([query], answer(A,(loc(B,A),const(B,stateid())))).
+          _parse([query], answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))).
+          _parse([query], answer(A,(loc(B,A),const(B,cityid())))).
+          _parse([query], answer(A,(loc(B,A),const(B,cityid())))).
+          DatalogParser.loadSafe(): end
+        }
+        240 statements
+        Example tmp2ksr3mg9.dlog:0: query => {[fayetteville_nc:cityid/3],[bethesda_md:cityid/3],[alexandria_va:cityid/3],[raleigh_nc:cityid/3],[winston-salem_nc:cityid/3],[portsmouth_va:cityid/3],[silver spring_md:cityid/3],[huntington_wv:cityid/3],[newport news_va:cityid/3],[high point_nc:cityid/3],[charleston_wv:cityid/3],[dundalk_md:cityid/3],[lynchburg_va:cityid/3],[durham_nc:cityid/3],[hampton_va:cityid/3],[chesapeake_va:cityid/3],[roanoke_va:cityid/3]} | answer(A,(major(A),city(A),loc(A,B),state(B),river(C),loc(C,D),const(D,stateid(virginia)),traverse(C,B)))
+        Example tmp2ksr3mg9.dlog:1: query => {[jefferson city_mo:cityid/3],[phoenix_az:cityid/3],[baton rouge_la:cityid/3],[salt lake city_ut:cityid/3],[oklahoma city_ok:cityid/3],[jackson_ms:cityid/3],[nashville_tn:cityid/3],[little rock_ar:cityid/3],[austin_tx:cityid/3],[santa fe_nm:cityid/3],[topeka_ks:cityid/3],[denver_co:cityid/3]} | answer(A,(capital(A),loc(A,B),state(B),next_to(B,C),state(C),next_to(C,D),const(D,stateid(texas))))
+        Example tmp2ksr3mg9.dlog:2: query => {[delaware:riverid/2],[hudson:riverid/2],[allegheny:riverid/2]} | answer(A,(river(A),traverse(A,B),largest(C,(state(B),loc(C,B),city(C),loc(C,D),const(D,countryid(usa))))))
+        Example tmp2ksr3mg9.dlog:3: query => {[texas:stateid/2]} | answer(A,largest(A,(state(A),const(B,riverid('rio grande')),traverse(B,A))))
+        Example tmp2ksr3mg9.dlog:4: query => {[nevada:stateid/2],[utah:stateid/2],[oregon:stateid/2],[idaho:stateid/2],[colorado:stateid/2],[wyoming:stateid/2],[new mexico:stateid/2],[alaska:stateid/2],[washington:stateid/2],[california:stateid/2],[hawaii:stateid/2],[montana:stateid/2],[arizona:stateid/2]} | answer(A,(state(A),place(B),loc(B,A),higher(B,C),highest(C,(place(C),loc(C,D),const(D,stateid(texas))))))
+        Example tmp2ksr3mg9.dlog:5: query => {[louisiana:stateid/2]} | answer(A,lowest(B,(state(A),traverse(C,A),const(C,riverid(mississippi)),loc(B,A),place(B))))
+        Example tmp2ksr3mg9.dlog:6: query => {[nevada:stateid/2],[arizona:stateid/2],[oregon:stateid/2]} | answer(A,(state(A),next_to(B,A),largest(C,(state(B),population(B,C)))))
+        Example tmp2ksr3mg9.dlog:7: query => {[nevada:stateid/2],[utah:stateid/2],[oregon:stateid/2],[idaho:stateid/2],[colorado:stateid/2],[new mexico:stateid/2],[washington:stateid/2],[california:stateid/2],[arizona:stateid/2]} | answer(A,(state(A),next_to(A,B),state(B),next_to(B,C),largest(D,(state(C),population(C,D)))))
+        Example tmp2ksr3mg9.dlog:8: query => {[alaska:stateid/2]} | answer(A,(state(A),loc(B,A),highest(B,(place(B),loc(B,C),const(C,countryid(usa))))))
+        Example tmp2ksr3mg9.dlog:9: query => {[401800count]} | answer(A,(population(B,A),largest(C,(state(B),area(B,C)))))
+        Example tmp2ksr3mg9.dlog:10: query => {[6194length]} | answer(A,(elevation(B,A),highest(B,(place(B),loc(B,C),const(C,countryid(usa))))))
+        Example tmp2ksr3mg9.dlog:11: query => {[0count]} | answer(A,count(B,(river(B),loc(B,C),state(C),loc(D,C),highest(D,place(D))),A))
+        Example tmp2ksr3mg9.dlog:12: query => {[638333count]} | answer(A,(population(B,A),capital(B),loc(B,C),smallest(C,state(C))))
+        Example tmp2ksr3mg9.dlog:13: query => {[iowa:stateid/2]} | answer(A,smallest(A,(state(A),longest(B,river(B)),traverse(B,A))))
+        Example tmp2ksr3mg9.dlog:14: query => {[alaska:stateid/2],[california:stateid/2]} | answer(A,(state(A),loc(B,A),place(B),higher(B,C),highest(C,(place(C),loc(C,D),const(D,stateid(colorado))))))
+        Example tmp2ksr3mg9.dlog:15: query => {[690767count]} | answer(A,(population(B,A),smallest(B,(state(B),next_to(B,C),const(C,stateid(wyoming))))))
+        Example tmp2ksr3mg9.dlog:16: query => {[missouri:riverid/2]} | answer(A,longest(A,(river(A),traverse(A,B),const(B,countryid(usa)))))
+        Example tmp2ksr3mg9.dlog:17: query => {[1.01e-04count/length^2]} | answer(A,(density(B,A),const(B,stateid(pennsylvania))))
+        Example tmp2ksr3mg9.dlog:18: query => {[kentucky:stateid/2],[virginia:stateid/2],[mississippi:stateid/2],[louisiana:stateid/2],[alabama:stateid/2],[georgia:stateid/2],[missouri:stateid/2],[tennessee:stateid/2],[south carolina:stateid/2],[arkansas:stateid/2],[north carolina:stateid/2],[florida:stateid/2]} | answer(A,(state(A),next_to(A,B),state(B),next_to(B,C),state(C),next_to(C,D),const(D,stateid(florida))))
+        Example tmp2ksr3mg9.dlog:19: query => {[baton rouge_la:cityid/3],[santa fe_nm:cityid/3],[oklahoma city_ok:cityid/3],[little rock_ar:cityid/3]} | answer(A,(capital(A),loc(A,B),state(B),next_to(B,C),const(C,stateid(texas))))
+        Example tmp2ksr3mg9.dlog:20: query => {[6194length]} | answer(A,(elevation(B,A),highest(B,(place(B),loc(B,C),state(C)))))
+        Example tmp2ksr3mg9.dlog:21: query => {[waukegan_il:cityid/3],[evanston_il:cityid/3],[peoria_il:cityid/3],[oak lawn_il:cityid/3],[rockford_il:cityid/3],[cicero_il:cityid/3],[champaign_il:cityid/3],[arlington heights_il:cityid/3],[skokie_il:cityid/3],[joliet_il:cityid/3],[springfield_il:cityid/3],[aurora_il:cityid/3],[decatur_il:cityid/3],[elgin_il:cityid/3]} | answer(A,(major(A),city(A),loc(A,B),const(B,stateid(illinois))))
+        Example tmp2ksr3mg9.dlog:22: query => {[alaska:stateid/2]} | answer(A,highest(B,(state(A),loc(B,A),mountain(B))))
+        Example tmp2ksr3mg9.dlog:23: query => {[225195124count]} | answer(A,sum(B,state(B),population(B),A))
+        Example tmp2ksr3mg9.dlog:24: query => {[wabash:riverid/2],[ohio:riverid/2]} | answer(A,(river(A),loc(A,B),state(B),const(B,stateid(indiana))))
+        Example tmp2ksr3mg9.dlog:25: query => {[colorado:stateid/2]} | answer(A,(state(A),most(A,B,(state(A),loc(B,A),river(B)))))
+        Example tmp2ksr3mg9.dlog:26: query => {[minneapolis_mn:cityid/3]} | answer(A,largest(B,(city(A),loc(A,C),const(C,stateid(minnesota)),population(A,B))))
+        Example tmp2ksr3mg9.dlog:27: query => {[arizona:stateid/2],[nevada:stateid/2],[oregon:stateid/2]} | answer(A,(state(A),next_to(A,B),most(B,C,(state(B),loc(C,B),city(C)))))
+        Example tmp2ksr3mg9.dlog:28: query => {[west virginia:stateid/2],[virginia:stateid/2],[district of columbia:stateid/2],[maryland:stateid/2]} | answer(A,(state(A),const(B,riverid(potomac)),traverse(B,A)))
+        Example tmp2ksr3mg9.dlog:29: query => {[allegheny:riverid/2]} | answer(A,longest(A,(river(A),traverse(A,B),const(B,stateid('new york')))))
+        Example tmp2ksr3mg9.dlog:30: query => {[18count]} | answer(A,count(B,(major(B),city(B),loc(B,C),state(C),next_to(C,D),const(D,stateid(nebraska))),A))
+        Example tmp2ksr3mg9.dlog:31: query => {[new jersey:stateid/2]} | answer(A,largest(B,(state(A),density(A,B))))
+        Example tmp2ksr3mg9.dlog:32: query => {[new york:stateid/2]} | answer(A,(state(A),loc(B,A),largest(C,(city(B),population(B,C)))))
+        Example tmp2ksr3mg9.dlog:33: query => {[5count]} | answer(A,count(B,(state(B),const(C,riverid(colorado)),river(C),traverse(C,B)),A))
+        Example tmp2ksr3mg9.dlog:34: query => {[anchorage_ak:cityid/3]} | answer(A,smallest(A,(city(A),loc(A,B),largest(B,state(B)))))
+        Example tmp2ksr3mg9.dlog:35: query => {[louisiana:stateid/2]} | answer(A,smallest(B,(state(A),area(A,B),next_to(A,C),const(C,stateid(texas)))))
+        Example tmp2ksr3mg9.dlog:36: query => {[magazine mountain:placeid/2],[cheaha mountain:placeid/2],[clingmans dome:placeid/2],[driskill mountain:placeid/2]} | answer(A,(high_point(B,A),loc(A,B),state(B),next_to(B,C),const(C,stateid(mississippi))))
+        Example tmp2ksr3mg9.dlog:37: query => {[missouri:riverid/2]} | answer(A,longest(A,(river(A),loc(A,B),const(B,countryid(usa)))))
+        Example tmp2ksr3mg9.dlog:38: query => {[tenleytown:placeid/2]} | answer(A,highest(A,(place(A),loc(A,B),smallest(B,state(B)))))
+        Example tmp2ksr3mg9.dlog:39: query => {} | answer(A,(state(A),next_to(A,B),smallest(C,(state(B),population(B,C)))))
+        Example tmp2ksr3mg9.dlog:40: query => {[31count]} | answer(A,count(B,(state(B),next_to(B,C),major(C),river(C)),A))
+        Example tmp2ksr3mg9.dlog:41: query => {[3901length]} | answer(A,(elevation(B,A),highest(B,(place(B),loc(B,C),const(C,stateid(montana))))))
+        Example tmp2ksr3mg9.dlog:42: query => {[death valley:placeid/2]} | answer(A,lowest(A,(place(A),loc(A,B),const(B,countryid(usa)))))
+        Example tmp2ksr3mg9.dlog:43: query => {[casper_wy:cityid/3]} | answer(A,largest(B,(population(A,B),city(A),loc(A,C),const(C,stateid(wyoming)))))
+        Example tmp2ksr3mg9.dlog:44: query => {} | answer(A,(population(B,A),const(B,cityid(springfield,sd))))
+        Example tmp2ksr3mg9.dlog:45: query => {[iowa:stateid/2],[wisconsin:stateid/2],[kentucky:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[louisiana:stateid/2],[missouri:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[arkansas:stateid/2]} | answer(A,(state(A),const(B,riverid(mississippi)),river(B),traverse(B,A)))
+        Example tmp2ksr3mg9.dlog:46: query => {[401800count]} | answer(A,(population(B,A),largest(B,state(B))))
+        Example tmp2ksr3mg9.dlog:47: query => {[2count]} | answer(A,count(B,(state(B),loc(C,B),const(C,cityid(rochester,_))),A))
+        Example tmp2ksr3mg9.dlog:48: query => {[9.83e+12length^2]} | answer(A,(area(B,A),const(B,countryid(usa))))
+        Example tmp2ksr3mg9.dlog:49: query => {[scotts valley_ca:cityid/3]} | answer(A,smallest(B,(city(A),population(A,B))))
+        Example tmp2ksr3mg9.dlog:50: query => {[163length]} | answer(A,(elevation(B,A),highest(B,(place(B),loc(B,C),const(C,stateid(louisiana))))))
+        Example tmp2ksr3mg9.dlog:51: query => {[pontchartrain:lakeid/2]} | answer(A,(lake(A),loc(A,B),state(B),next_to(B,C),const(C,stateid(texas))))
+        Example tmp2ksr3mg9.dlog:52: query => {[mount mckinley:placeid/2]} | answer(A,highest(A,(place(A),loc(A,B),const(B,countryid(usa)))))
+        Example tmp2ksr3mg9.dlog:53: query => {[missouri:riverid/2]} | answer(A,longest(A,(river(A),loc(A,B),const(B,countryid(usa)))))
+        Example tmp2ksr3mg9.dlog:54: query => {[46count]} | answer(A,count(B,(river(B),loc(B,C),const(C,countryid(usa))),A))
+        Example tmp2ksr3mg9.dlog:55: query => {[new jersey:stateid/2]} | answer(A,largest(B,(state(A),density(A,B))))
+        Example tmp2ksr3mg9.dlog:56: query => {[425022count]} | answer(A,(population(B,A),const(B,cityid(atlanta,_))))
+        Example tmp2ksr3mg9.dlog:57: query => {[mckinley:mountainid/2]} | answer(A,highest(A,(mountain(A),loc(A,B),const(B,stateid(alaska)))))
+        Example tmp2ksr3mg9.dlog:58: query => {[new jersey:stateid/2]} | answer(A,largest(B,(state(A),density(A,B))))
+        Example tmp2ksr3mg9.dlog:59: query => {[lawton_ok:cityid/3],[norman_ok:cityid/3]} | answer(A,(major(A),city(A),loc(A,B),const(B,stateid(oklahoma))))
+        Example tmp2ksr3mg9.dlog:60: query => {[2913000count]} | answer(A,(population(B,A),const(B,stateid(iowa))))
+        Example tmp2ksr3mg9.dlog:61: query => {[435count]} | answer(A,count(B,(city(B),loc(B,C),const(C,countryid(usa))),A))
+        Example tmp2ksr3mg9.dlog:62: query => {[independence_mo:cityid/3],[springfield_mo:cityid/3],[columbia_mo:cityid/3],[st. joseph_mo:cityid/3]} | answer(A,(major(A),city(A),loc(A,B),const(B,stateid(missouri))))
+        Example tmp2ksr3mg9.dlog:63: query => {[8.06e+10length^2]} | answer(A,(area(B,A),const(B,stateid('south carolina'))))
+        Example tmp2ksr3mg9.dlog:64: query => {[947200count]} | answer(A,(population(B,A),const(B,stateid('rhode island'))))
+        Example tmp2ksr3mg9.dlog:65: query => {[3count]} | answer(A,count(B,(river(B),loc(B,C),const(C,stateid('new york'))),A))
+        Example tmp2ksr3mg9.dlog:66: query => {[lakewood_oh:cityid/3],[springfield_oh:cityid/3],[lorain_oh:cityid/3],[kettering_oh:cityid/3],[euclid_oh:cityid/3],[youngstown_oh:cityid/3],[elyria_oh:cityid/3],[parma_oh:cityid/3],[hamilton_oh:cityid/3],[canton_oh:cityid/3]} | answer(A,(major(A),city(A),loc(A,B),const(B,stateid(ohio))))
+        Example tmp2ksr3mg9.dlog:67: query => {[new jersey:stateid/2],[new york:stateid/2],[vermont:stateid/2],[delaware:stateid/2],[iowa:stateid/2],[wisconsin:stateid/2],[nevada:stateid/2],[kentucky:stateid/2],[utah:stateid/2],[massachusetts:stateid/2],[oregon:stateid/2],[virginia:stateid/2],[indiana:stateid/2],[new hampshire:stateid/2],[south dakota:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[idaho:stateid/2],[colorado:stateid/2],[district of columbia:stateid/2],[louisiana:stateid/2],[alabama:stateid/2],[north dakota:stateid/2],[wyoming:stateid/2],[pennsylvania:stateid/2],[georgia:stateid/2],[michigan:stateid/2],[missouri:stateid/2],[texas:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[south carolina:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[arkansas:stateid/2],[washington:stateid/2],[connecticut:stateid/2],[kansas:stateid/2],[california:stateid/2],[nebraska:stateid/2],[ohio:stateid/2],[north carolina:stateid/2],[florida:stateid/2],[west virginia:stateid/2],[montana:stateid/2],[maryland:stateid/2],[arizona:stateid/2]} | answer(A,(state(A),loc(B,A),river(B),traverse(B,A)))
+        Example tmp2ksr3mg9.dlog:68: query => {[pecos:riverid/2],[washita:riverid/2]} | answer(A,shortest(A,(river(A),loc(A,B),const(B,stateid(texas)))))
+        Example tmp2ksr3mg9.dlog:69: query => {[granite peak:placeid/2]} | answer(A,highest(A,(place(A),loc(A,B),const(B,stateid(montana)))))
+        Example tmp2ksr3mg9.dlog:70: query => {[guadalupe peak:placeid/2]} | answer(A,highest(A,(place(A),loc(A,B),const(B,stateid(texas)))))
+        Example tmp2ksr3mg9.dlog:71: query => {[alaska:stateid/2]} | answer(A,smallest(B,(state(A),density(A,B))))
+        Example tmp2ksr3mg9.dlog:72: query => {[435count]} | answer(A,count(B,(city(B),loc(B,C),const(C,countryid(usa))),A))
+        Example tmp2ksr3mg9.dlog:73: query => {[new mexico:stateid/2]} | answer(A,largest(A,(state(A),next_to(A,B),const(B,stateid(texas)))))
+        Example tmp2ksr3mg9.dlog:74: query => {[ohio:stateid/2],[indiana:stateid/2],[wisconsin:stateid/2]} | answer(A,(next_to(A,B),state(A),const(B,stateid(michigan))))
+        Example tmp2ksr3mg9.dlog:75: query => {[death valley:placeid/2]} | answer(A,lowest(A,(place(A),loc(A,B),const(B,stateid(california)))))
+        Example tmp2ksr3mg9.dlog:76: query => {[iowa:stateid/2],[wisconsin:stateid/2],[kentucky:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[louisiana:stateid/2],[missouri:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[arkansas:stateid/2]} | answer(A,(state(A),const(B,riverid(mississippi)),traverse(B,A)))
+        Example tmp2ksr3mg9.dlog:77: query => {[mississippi:riverid/2]} | answer(A,most(A,B,(river(A),traverse(A,B),state(B))))
+        Example tmp2ksr3mg9.dlog:78: query => {[iowa:stateid/2]} | answer(A,(state(A),const(B,cityid('des moines',_)),loc(B,A)))
+        Example tmp2ksr3mg9.dlog:79: query => {[san angelo_tx:cityid/3],[richardson_tx:cityid/3],[amarillo_tx:cityid/3],[grand prairie_tx:cityid/3],[waco_tx:cityid/3],[beaumont_tx:cityid/3],[longview_tx:cityid/3],[irving_tx:cityid/3],[brownsville_tx:cityid/3],[mesquite_tx:cityid/3],[pasadena_tx:cityid/3],[wichita falls_tx:cityid/3],[laredo_tx:cityid/3],[mcallen_tx:cityid/3],[abilene_tx:cityid/3],[garland_tx:cityid/3],[plano_tx:cityid/3],[odessa_tx:cityid/3],[midland_tx:cityid/3],[port arthur_tx:cityid/3],[tyler_tx:cityid/3]} | answer(A,(major(A),city(A),loc(A,B),const(B,stateid(texas))))
+        Example tmp2ksr3mg9.dlog:80: query => {[275741count]} | answer(A,(population(B,A),const(B,cityid(sacramento,_))))
+        Example tmp2ksr3mg9.dlog:81: query => {[alaska:stateid/2]} | answer(A,smallest(B,(state(A),population(A,B))))
+        Example tmp2ksr3mg9.dlog:82: query => {[4count]} | answer(A,count(B,(river(B),loc(B,C),const(C,stateid(missouri))),A))
+        Example tmp2ksr3mg9.dlog:83: query => {[alaska:stateid/2]} | answer(A,(loc(B,A),state(A),const(B,placeid('mount mckinley'))))
+        Example tmp2ksr3mg9.dlog:84: query => {[new york:stateid/2]} | answer(A,largest(B,(state(A),loc(B,A),city(B))))
+        Example tmp2ksr3mg9.dlog:85: query => {[10count]} | answer(A,count(B,(river(B),loc(B,C),const(C,stateid(colorado))),A))
+        Example tmp2ksr3mg9.dlog:86: query => {} | answer(A,(major(A),river(A),loc(A,B),const(B,stateid(texas))))
+        Example tmp2ksr3mg9.dlog:87: query => {[richmond_va:cityid/3],[norfolk_va:cityid/3],[alexandria_va:cityid/3],[portsmouth_va:cityid/3],[newport news_va:cityid/3],[lynchburg_va:cityid/3],[hampton_va:cityid/3],[virginia beach_va:cityid/3],[chesapeake_va:cityid/3],[roanoke_va:cityid/3],[arlington_va:cityid/3]} | answer(A,(city(A),loc(A,B),const(B,stateid(virginia))))
+        Example tmp2ksr3mg9.dlog:88: query => {[279count]} | answer(A,count(B,(major(B),city(B)),A))
+        Example tmp2ksr3mg9.dlog:89: query => {[786700count]} | answer(A,(population(B,A),const(B,stateid(montana))))
+        Example tmp2ksr3mg9.dlog:90: query => {[louisiana:stateid/2],[texas:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[arkansas:stateid/2]} | answer(A,(state(A),loc(B,A),const(B,riverid(red)),river(B)))
+        Example tmp2ksr3mg9.dlog:91: query => {[gila:riverid/2],[pecos:riverid/2],[cimarron:riverid/2],[rio grande:riverid/2],[canadian:riverid/2],[red:riverid/2],[san juan:riverid/2]} | answer(A,(river(A),loc(A,B),const(B,stateid('new mexico'))))
+        Example tmp2ksr3mg9.dlog:92: query => {[oxnard_ca:cityid/3],[santa barbara_ca:cityid/3],[buena park_ca:cityid/3],[downey_ca:cityid/3],[concord_ca:cityid/3],[orange_ca:cityid/3],[pomona_ca:cityid/3],[san jose_ca:cityid/3],[vallejo_ca:cityid/3],[san bernardino_ca:cityid/3],[san leandro_ca:cityid/3],[long beach_ca:cityid/3],[modesto_ca:cityid/3],[richmond_ca:cityid/3],[westminster_ca:cityid/3],[mountain view_ca:cityid/3],[santa clara_ca:cityid/3],[citrus heights_ca:cityid/3],[oakland_ca:cityid/3],[carson_ca:cityid/3],[glendale_ca:cityid/3],[san diego_ca:cityid/3],[los angeles_ca:cityid/3],[oceanside_ca:cityid/3],[south gate_ca:cityid/3],[san francisco_ca:cityid/3],[riverside_ca:cityid/3],[fresno_ca:cityid/3],[stockton_ca:cityid/3],[scotts valley_ca:cityid/3],[garden grove_ca:cityid/3],[east los angeles_ca:cityid/3],[ontario_ca:cityid/3],[alhambra_ca:cityid/3],[costa mesa_ca:cityid/3],[irvine_ca:cityid/3],[hayward_ca:cityid/3],[santa monica_ca:cityid/3],[santa rosa_ca:cityid/3],[el cajon_ca:cityid/3],[west covina_ca:cityid/3],[chula vista_ca:cityid/3],[redondo beach_ca:cityid/3],[burbank_ca:cityid/3],[berkeley_ca:cityid/3],[inglewood_ca:cityid/3],[alameda_ca:cityid/3],[san mateo_ca:cityid/3],[el monte_ca:cityid/3],[sunnyvale_ca:cityid/3],[fairfield_ca:cityid/3],[newport beach_ca:cityid/3],[sacramento_ca:cityid/3],[ventura_ca:cityid/3],[bakersfield_ca:cityid/3],[thousand oaks_ca:cityid/3],[fremont_ca:cityid/3],[anaheim_ca:cityid/3],[torrance_ca:cityid/3],[lakewood_ca:cityid/3],[simi valley_ca:cityid/3],[santa ana_ca:cityid/3],[compton_ca:cityid/3],[whittier_ca:cityid/3],[fullerton_ca:cityid/3],[daly city_ca:cityid/3],[salinas_ca:cityid/3],[norwalk_ca:cityid/3],[pasadena_ca:cityid/3],[escondido_ca:cityid/3],[huntington beach_ca:cityid/3]} | answer(A,(city(A),loc(A,B),const(B,stateid(california))))
+        Example tmp2ksr3mg9.dlog:93: query => {[964000count]} | answer(A,(population(B,A),const(B,stateid(hawaii))))
+        Example tmp2ksr3mg9.dlog:94: query => {[honolulu_hi:cityid/3]} | answer(A,(capital(A),loc(A,B),const(B,stateid(hawaii))))
+        Example tmp2ksr3mg9.dlog:95: query => {[23670000count]} | answer(A,(population(B,A),const(B,stateid(california))))
+        Example tmp2ksr3mg9.dlog:96: query => {[salt lake city_ut:cityid/3]} | answer(A,(capital(A),loc(A,B),const(B,stateid(utah))))
+        Example tmp2ksr3mg9.dlog:97: query => {[austin_tx:cityid/3]} | answer(A,(capital(A),loc(A,B),const(B,stateid(texas))))
+        Example tmp2ksr3mg9.dlog:98: query => {[atlanta_ga:cityid/3]} | answer(A,(capital(A),loc(A,B),const(B,stateid(georgia))))
+        Example tmp2ksr3mg9.dlog:99: query => {[new jersey:stateid/2],[new york:stateid/2],[vermont:stateid/2],[delaware:stateid/2],[iowa:stateid/2],[wisconsin:stateid/2],[nevada:stateid/2],[kentucky:stateid/2],[utah:stateid/2],[massachusetts:stateid/2],[oregon:stateid/2],[virginia:stateid/2],[indiana:stateid/2],[new hampshire:stateid/2],[south dakota:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[rhode island:stateid/2],[maine:stateid/2],[idaho:stateid/2],[colorado:stateid/2],[district of columbia:stateid/2],[alabama:stateid/2],[north dakota:stateid/2],[wyoming:stateid/2],[pennsylvania:stateid/2],[georgia:stateid/2],[michigan:stateid/2],[missouri:stateid/2],[texas:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[south carolina:stateid/2],[alaska:stateid/2],[washington:stateid/2],[connecticut:stateid/2],[kansas:stateid/2],[california:stateid/2],[nebraska:stateid/2],[ohio:stateid/2],[north carolina:stateid/2],[florida:stateid/2],[west virginia:stateid/2],[hawaii:stateid/2],[montana:stateid/2],[maryland:stateid/2],[arizona:stateid/2]} | answer(A,(state(A),\+(next_to(A,B),const(B,stateid(texas)))))
+        Example tmp2ksr3mg9.dlog:100: query => {[1461000count]} | answer(A,(population(B,A),const(B,stateid(utah))))
+        Example tmp2ksr3mg9.dlog:101: query => {[369200000length^2]} | answer(A,(area(B,A),const(B,cityid(seattle,_))))
+        Example tmp2ksr3mg9.dlog:102: query => {[alaska:stateid/2],[hawaii:stateid/2]} | answer(A,fewest(A,B,(state(A),next_to(A,B),state(B))))
+        Example tmp2ksr3mg9.dlog:103: query => {[3033000length]} | answer(A,(len(B,A),const(B,riverid('rio grande'))))
+        Example tmp2ksr3mg9.dlog:104: query => {[delaware:stateid/2]} | answer(A,(state(A),capital(A,B),const(B,cityid(dover,_))))
+        Example tmp2ksr3mg9.dlog:105: query => {[new jersey:stateid/2],[vermont:stateid/2],[massachusetts:stateid/2],[pennsylvania:stateid/2],[connecticut:stateid/2]} | answer(A,(state(A),next_to(A,B),const(B,stateid('new york'))))
+        Example tmp2ksr3mg9.dlog:106: query => {[missouri:riverid/2]} | answer(A,longest(A,river(A)))
+        Example tmp2ksr3mg9.dlog:107: query => {[alaska:stateid/2]} | answer(A,largest(A,state(A)))
+        Example tmp2ksr3mg9.dlog:108: query => {} | answer(A,(state(A),next_to(A,B),const(B,stateid(hawaii))))
+        Example tmp2ksr3mg9.dlog:109: query => {[georgia:stateid/2],[alabama:stateid/2]} | answer(A,(state(A),next_to(A,B),const(B,stateid(florida))))
+        Example tmp2ksr3mg9.dlog:110: query => {[new york_ny:cityid/3]} | answer(A,largest(A,city(A)))
+        Example tmp2ksr3mg9.dlog:111: query => {[arkansas:stateid/2],[louisiana:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2]} | answer(A,(state(A),next_to(A,B),const(B,stateid(texas))))
+        Example tmp2ksr3mg9.dlog:112: query => {[pennsylvania:stateid/2],[new jersey:stateid/2],[maryland:stateid/2]} | answer(A,(state(A),next_to(A,B),const(B,stateid(delaware))))
+        Example tmp2ksr3mg9.dlog:113: query => {[virginia:stateid/2],[indiana:stateid/2],[missouri:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[ohio:stateid/2],[west virginia:stateid/2]} | answer(A,(state(A),next_to(A,B),const(B,stateid(kentucky))))
+        Example tmp2ksr3mg9.dlog:114: query => {[wisconsin:stateid/2],[south dakota:stateid/2],[minnesota:stateid/2],[missouri:stateid/2],[illinois:stateid/2],[nebraska:stateid/2]} | answer(A,(state(A),next_to(A,B),const(B,stateid(iowa))))
+        Example tmp2ksr3mg9.dlog:115: query => {[louisiana:stateid/2],[usa:countryid/2]} | answer(A,(loc(B,A),const(B,cityid('new orleans',_))))
+        Example tmp2ksr3mg9.dlog:116: query => {[usa:countryid/2]} | answer(A,(loc(B,A),const(B,stateid(massachusetts))))
+        Example tmp2ksr3mg9.dlog:117: query => {[wisconsin:stateid/2],[south dakota:stateid/2],[minnesota:stateid/2],[missouri:stateid/2],[illinois:stateid/2],[nebraska:stateid/2]} | answer(A,(state(A),next_to(A,B),const(B,stateid(iowa))))
+        Example tmp2ksr3mg9.dlog:118: query => {[indiana:stateid/2],[usa:countryid/2]} | answer(A,(loc(B,A),const(B,cityid(indianapolis,_))))
+        Example tmp2ksr3mg9.dlog:119: query => {[usa:countryid/2],[texas:stateid/2]} | answer(A,(loc(B,A),const(B,cityid(austin,_))))
+        Example FAILED TO PARSE
+        Example tmp2ksr3mg9.dlog:120: query => {[denver_co:cityid/3]} | answer(A,(capital(A),loc(A,B),const(B,C),const(C,D),const(D,stateid(colorado))))
+        Example FAILED TO PARSE
+        Example tmp2ksr3mg9.dlog:121: query => {[new jersey:stateid/2],[new york:stateid/2],[vermont:stateid/2],[delaware:stateid/2],[iowa:stateid/2],[wisconsin:stateid/2],[nevada:stateid/2],[kentucky:stateid/2],[utah:stateid/2],[massachusetts:stateid/2],[oregon:stateid/2],[virginia:stateid/2],[indiana:stateid/2],[new hampshire:stateid/2],[south dakota:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[rhode island:stateid/2],[maine:stateid/2],[idaho:stateid/2],[colorado:stateid/2],[district of columbia:stateid/2],[louisiana:stateid/2],[alabama:stateid/2],[north dakota:stateid/2],[wyoming:stateid/2],[pennsylvania:stateid/2],[georgia:stateid/2],[michigan:stateid/2],[missouri:stateid/2],[texas:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[south carolina:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[arkansas:stateid/2],[alaska:stateid/2],[washington:stateid/2],[connecticut:stateid/2],[kansas:stateid/2],[california:stateid/2],[nebraska:stateid/2],[ohio:stateid/2],[north carolina:stateid/2],[florida:stateid/2],[west virginia:stateid/2],[hawaii:stateid/2],[montana:stateid/2],[maryland:stateid/2],[arizona:stateid/2]} | answer(A,largest(B,(state(A),const(B,riverid(mississippi)),river(B))))
+        Example tmp2ksr3mg9.dlog:122: query => {[iowa:stateid/2],[wisconsin:stateid/2],[kentucky:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[louisiana:stateid/2],[missouri:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[arkansas:stateid/2]} | answer(A,(state(A),next_to(A,B),const(B,riverid(mississippi)),river(B)))
+        Example FAILED TO EXECUTE
+        Example FAILED TO PARSE
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:131: query => {[new jersey:stateid/2],[new york:stateid/2],[vermont:stateid/2],[delaware:stateid/2],[iowa:stateid/2],[wisconsin:stateid/2],[nevada:stateid/2],[kentucky:stateid/2],[utah:stateid/2],[massachusetts:stateid/2],[oregon:stateid/2],[virginia:stateid/2],[indiana:stateid/2],[new hampshire:stateid/2],[south dakota:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[rhode island:stateid/2],[maine:stateid/2],[idaho:stateid/2],[colorado:stateid/2],[district of columbia:stateid/2],[louisiana:stateid/2],[alabama:stateid/2],[north dakota:stateid/2],[wyoming:stateid/2],[pennsylvania:stateid/2],[georgia:stateid/2],[michigan:stateid/2],[missouri:stateid/2],[texas:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[south carolina:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[arkansas:stateid/2],[alaska:stateid/2],[washington:stateid/2],[connecticut:stateid/2],[kansas:stateid/2],[california:stateid/2],[nebraska:stateid/2],[ohio:stateid/2],[north carolina:stateid/2],[florida:stateid/2],[west virginia:stateid/2],[hawaii:stateid/2],[montana:stateid/2],[maryland:stateid/2],[arizona:stateid/2]} | answer(A,(state(A),const(B,riverid(mississippi)),river(B)))
+        Example tmp2ksr3mg9.dlog:132: query => {[3778000length]} | answer(A,(size(B,A),const(B,riverid(mississippi)),river(B)))
+        Example tmp2ksr3mg9.dlog:133: query => {} | answer(A,longest(A,(river(A),traverse(A,B),const(B,stateid(alaska)))))
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:135: query => {[utah:stateid/2],[wyoming:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[kansas:stateid/2],[nebraska:stateid/2],[arizona:stateid/2]} | answer(A,(state(A),next_to(A,B),const(B,C),const(C,D),const(D,stateid(colorado))))
+        Example tmp2ksr3mg9.dlog:136: query => {[denver_co:cityid/3]} | answer(A,(capital(A),loc(A,B),const(B,stateid(colorado))))
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:138: query => {} | answer(A,(major(A),city(A),loc(A,B),const(B,stateid(alaska))))
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:141: query => {} | answer(A,(river(A),loc(A,B),const(B,stateid(alaska))))
+        Example FAILED TO PARSE
+        Example tmp2ksr3mg9.dlog:142: query => {[oxnard_ca:cityid/3],[dayton_oh:cityid/3],[bristol township_pa:cityid/3],[duval circle_dc:cityid/3],[santa barbara_ca:cityid/3],[buena park_ca:cityid/3],[fayetteville_nc:cityid/3],[orlando_fl:cityid/3],[san angelo_tx:cityid/3],[downey_ca:cityid/3],[greenville_sc:cityid/3],[concord_ca:cityid/3],[richardson_tx:cityid/3],[grand island_ne:cityid/3],[columbia_sc:cityid/3],[waukegan_il:cityid/3],[orange_ca:cityid/3],[pomona_ca:cityid/3],[lubbock_tx:cityid/3],[lowell_ma:cityid/3],[phoenix_az:cityid/3],[charleston_sc:cityid/3],[largo_fl:cityid/3],[clearwater_fl:cityid/3],[bayonne_nj:cityid/3],[idaho falls_id:cityid/3],[baton rouge_la:cityid/3],[san jose_ca:cityid/3],[salt lake city_ut:cityid/3],[manchester_nh:cityid/3],[amarillo_tx:cityid/3],[georgetown_dc:cityid/3],[vallejo_ca:cityid/3],[grand prairie_tx:cityid/3],[covington_ky:cityid/3],[new york_ny:cityid/3],[concord_nh:cityid/3],[san bernardino_ca:cityid/3],[portsmouth_nh:cityid/3],[warren_mi:cityid/3],[lakewood_oh:cityid/3],[bethesda_md:cityid/3],[louisville_ky:cityid/3],[yonkers_ny:cityid/3],[evanston_il:cityid/3],[fort worth_tx:cityid/3],[omaha_ne:cityid/3],[medford_ma:cityid/3],[san leandro_ca:cityid/3],[lakewood_co:cityid/3],[long beach_ca:cityid/3],[biloxi_ms:cityid/3],[mobile_al:cityid/3],[pueblo_co:cityid/3],[las vegas_nv:cityid/3],[great falls_mt:cityid/3],[boise_id:cityid/3],[richmond_va:cityid/3],[modesto_ca:cityid/3],[boston_ma:cityid/3],[cleveland_oh:cityid/3],[houston_tx:cityid/3],[cheyenne_wy:cityid/3],[richmond_ca:cityid/3],[north charleston_sc:cityid/3],[westminster_ca:cityid/3],[mountain view_ca:cityid/3],[madison_wi:cityid/3],[des moines_ia:cityid/3],[bellevue_wa:cityid/3],[reno_nv:cityid/3],[warwick_ri:cityid/3],[schenectady_ny:cityid/3],[sterling heights_mi:cityid/3],[birmingham_al:cityid/3],[norfolk_va:cityid/3],[peoria_il:cityid/3],[santa clara_ca:cityid/3],[newark_nj:cityid/3],[bethlehem_pa:cityid/3],[aurora_co:cityid/3],[utica_ny:cityid/3],[salem_or:cityid/3],[milwaukee_wi:cityid/3],[fort lauderdale_fl:cityid/3],[columbia_mo:cityid/3],[alexandria_va:cityid/3],[springfield_mo:cityid/3],[raleigh_nc:cityid/3],[winston-salem_nc:cityid/3],[portsmouth_va:cityid/3],[livonia_mi:cityid/3],[lawton_ok:cityid/3],[fargo_nd:cityid/3],[citrus heights_ca:cityid/3],[waterford_mi:cityid/3],[independence_mo:cityid/3],[silver spring_md:cityid/3],[waco_tx:cityid/3],[st. louis_mo:cityid/3],[oakland_ca:cityid/3],[worcester_ma:cityid/3],[carson_ca:cityid/3],[bennington_vt:cityid/3],[bristol_ct:cityid/3],[glendale_ca:cityid/3],[indianapolis_in:cityid/3],[wyoming_mi:cityid/3],[rochester_mn:cityid/3],[san diego_ca:cityid/3],[beaumont_tx:cityid/3],[charlotte_nc:cityid/3],[los angeles_ca:cityid/3],[watertown_sd:cityid/3],[oceanside_ca:cityid/3],[bangor_me:cityid/3],[oak lawn_il:cityid/3],[east orange_nj:cityid/3],[oklahoma city_ok:cityid/3],[scranton_pa:cityid/3],[westland_mi:cityid/3],[south gate_ca:cityid/3],[bloomington_mn:cityid/3],[royal oak_mi:cityid/3],[corpus christi_tx:cityid/3],[terre haute_in:cityid/3],[ogden_ut:cityid/3],[longview_tx:cityid/3],[missoula_mt:cityid/3],[anderson_in:cityid/3],[springfield_oh:cityid/3],[tulsa_ok:cityid/3],[san francisco_ca:cityid/3],[waterloo_ia:cityid/3],[troy_mi:cityid/3],[riverside_ca:cityid/3],[rockford_il:cityid/3],[somerville_ma:cityid/3],[lynn_ma:cityid/3],[minneapolis_mn:cityid/3],[quincy_ma:cityid/3],[cicero_il:cityid/3],[fresno_ca:cityid/3],[jackson_ms:cityid/3],[stockton_ca:cityid/3],[scotts valley_ca:cityid/3],[garden grove_ca:cityid/3],[east los angeles_ca:cityid/3],[huntington_wv:cityid/3],[norwalk_ct:cityid/3],[bridgeport_ct:cityid/3],[ontario_ca:cityid/3],[arlington_tx:cityid/3],[alhambra_ca:cityid/3],[lorain_oh:cityid/3],[penn hills_pa:cityid/3],[macon_ga:cityid/3],[costa mesa_ca:cityid/3],[irvine_ca:cityid/3],[memphis_tn:cityid/3],[billings_mt:cityid/3],[dearborn heights_mi:cityid/3],[wilmington_de:cityid/3],[hayward_ca:cityid/3],[irving_tx:cityid/3],[scottsdale_az:cityid/3],[cedar rapids_ia:cityid/3],[santa monica_ca:cityid/3],[kettering_oh:cityid/3],[santa rosa_ca:cityid/3],[rapid city_sd:cityid/3],[gainesville_fl:cityid/3],[hattiesburg_ms:cityid/3],[gary_in:cityid/3],[kendall_fl:cityid/3],[el cajon_ca:cityid/3],[west covina_ca:cityid/3],[sitka_ak:cityid/3],[arvada_co:cityid/3],[brownsville_tx:cityid/3],[sioux falls_sd:cityid/3],[flint_mi:cityid/3],[anchorage_ak:cityid/3],[kalamazoo_mi:cityid/3],[south bend_in:cityid/3],[clifton_nj:cityid/3],[chula vista_ca:cityid/3],[euclid_oh:cityid/3],[redondo beach_ca:cityid/3],[chattanooga_tn:cityid/3],[nashville_tn:cityid/3],[hartford_ct:cityid/3],[springfield_or:cityid/3],[washington_dc:cityid/3],[mesquite_tx:cityid/3],[clinton_mi:cityid/3],[burbank_ca:cityid/3],[farmington hills_mi:cityid/3],[middletown_nj:cityid/3],[las cruces_nm:cityid/3],[pasadena_tx:cityid/3],[little rock_ar:cityid/3],[pine bluff_ar:cityid/3],[racine_wi:cityid/3],[lexington_ky:cityid/3],[youngstown_oh:cityid/3],[tampa_fl:cityid/3],[austin_tx:cityid/3],[new orleans_la:cityid/3],[juneau_ak:cityid/3],[huntsville_al:cityid/3],[cheektowaga_ny:cityid/3],[framingham_ma:cityid/3],[cincinnati_oh:cityid/3],[providence_ri:cityid/3],[monroe_la:cityid/3],[tallahassee_fl:cityid/3],[lewiston_me:cityid/3],[kansas city_ks:cityid/3],[champaign_il:cityid/3],[tuscaloosa_al:cityid/3],[boulder_co:cityid/3],[berkeley_ca:cityid/3],[inglewood_ca:cityid/3],[minot_nd:cityid/3],[woodbridge_nj:cityid/3],[reading_pa:cityid/3],[newport news_va:cityid/3],[wichita falls_tx:cityid/3],[fort smith_ar:cityid/3],[miami_fl:cityid/3],[danbury_ct:cityid/3],[lincoln_ne:cityid/3],[mount vernon_ny:cityid/3],[rock springs_wy:cityid/3],[fort collins_co:cityid/3],[ann arbor_mi:cityid/3],[waltham_ma:cityid/3],[bismarck_nd:cityid/3],[santa fe_nm:cityid/3],[akron_oh:cityid/3],[nashua_nh:cityid/3],[buffalo_ny:cityid/3],[alameda_ca:cityid/3],[stamford_ct:cityid/3],[arlington heights_il:cityid/3],[san mateo_ca:cityid/3],[el monte_ca:cityid/3],[laredo_tx:cityid/3],[high point_nc:cityid/3],[albuquerque_nm:cityid/3],[springfield_ma:cityid/3],[dubuque_ia:cityid/3],[auburn_me:cityid/3],[sunnyvale_ca:cityid/3],[charleston_wv:cityid/3],[fairfield_ca:cityid/3],[newport beach_ca:cityid/3],[sacramento_ca:cityid/3],[dundalk_md:cityid/3],[meriden_ct:cityid/3],[tenleytown_dc:cityid/3],[ewa_hi:cityid/3],[mesa_az:cityid/3],[west allis_wi:cityid/3],[st. paul_mn:cityid/3],[lynchburg_va:cityid/3],[west hartford_ct:cityid/3],[southfield_mi:cityid/3],[paterson_nj:cityid/3],[st. petersburg_fl:cityid/3],[tucson_az:cityid/3],[el paso_tx:cityid/3],[seattle_wa:cityid/3],[altoona_pa:cityid/3],[lansing_mi:cityid/3],[sparks_nv:cityid/3],[rutland_vt:cityid/3],[hollywood_fl:cityid/3],[st. clair shores_mi:cityid/3],[mcallen_tx:cityid/3],[newark_de:cityid/3],[meridian_ms:cityid/3],[pocatello_id:cityid/3],[abilene_tx:cityid/3],[grand forks_nd:cityid/3],[ventura_ca:cityid/3],[new bedford_ma:cityid/3],[tempe_az:cityid/3],[garland_tx:cityid/3],[plano_tx:cityid/3],[pensacola_fl:cityid/3],[lewiston_id:cityid/3],[duluth_mn:cityid/3],[greenwich_ct:cityid/3],[skokie_il:cityid/3],[elyria_oh:cityid/3],[sioux city_ia:cityid/3],[bakersfield_ca:cityid/3],[niagara falls_ny:cityid/3],[thousand oaks_ca:cityid/3],[cranston_ri:cityid/3],[evansville_in:cityid/3],[columbus_ga:cityid/3],[trenton_nj:cityid/3],[redford_mi:cityid/3],[kenosha_wi:cityid/3],[durham_nc:cityid/3],[fremont_ca:cityid/3],[camden_nj:cityid/3],[miami beach_fl:cityid/3],[columbus_oh:cityid/3],[odessa_tx:cityid/3],[appleton_wi:cityid/3],[wichita_ks:cityid/3],[muncie_in:cityid/3],[overland park_ks:cityid/3],[anaheim_ca:cityid/3],[fort wayne_in:cityid/3],[honolulu_hi:cityid/3],[aberdeen_sd:cityid/3],[atlanta_ga:cityid/3],[butte_mt:cityid/3],[jersey city_nj:cityid/3],[montgomery_al:cityid/3],[green bay_wi:cityid/3],[topeka_ks:cityid/3],[edison_nj:cityid/3],[grand rapids_mi:cityid/3],[jacksonville_fl:cityid/3],[dallas_tx:cityid/3],[waterbury_ct:cityid/3],[hampton_va:cityid/3],[west valley_ut:cityid/3],[roswell_nm:cityid/3],[north platte_ne:cityid/3],[st. joseph_mo:cityid/3],[chicago_il:cityid/3],[savannah_ga:cityid/3],[torrance_ca:cityid/3],[colorado springs_co:cityid/3],[denver_co:cityid/3],[lakewood_ca:cityid/3],[owensboro_ky:cityid/3],[casper_wy:cityid/3],[hammond_in:cityid/3],[virginia beach_va:cityid/3],[baltimore_md:cityid/3],[laramie_wy:cityid/3],[irvington_nj:cityid/3],[abingdon_pa:cityid/3],[eugene_or:cityid/3],[joliet_il:cityid/3],[simi valley_ca:cityid/3],[knoxville_tn:cityid/3],[wheeling_wv:cityid/3],[west palm beach_fl:cityid/3],[dearborn_mi:cityid/3],[cherry hill_nj:cityid/3],[santa ana_ca:cityid/3],[new haven_ct:cityid/3],[lawrence_ma:cityid/3],[chesapeake_va:cityid/3],[springfield_il:cityid/3],[sunrise manor_nv:cityid/3],[erie_pa:cityid/3],[compton_ca:cityid/3],[levittown_ny:cityid/3],[aurora_il:cityid/3],[metairie_la:cityid/3],[detroit_mi:cityid/3],[dover_de:cityid/3],[albany_ny:cityid/3],[elizabeth_nj:cityid/3],[pontiac_mi:cityid/3],[philadelphia_pa:cityid/3],[whittier_ca:cityid/3],[decatur_il:cityid/3],[pawtucket_ri:cityid/3],[koolaupoko_hi:cityid/3],[north little rock_ar:cityid/3],[essex_vt:cityid/3],[portland_or:cityid/3],[lake charles_la:cityid/3],[fullerton_ca:cityid/3],[davenport_ia:cityid/3],[kansas city_mo:cityid/3],[fall river_ma:cityid/3],[brockton_ma:cityid/3],[midland_tx:cityid/3],[new rochelle_ny:cityid/3],[lafayette_la:cityid/3],[greensboro_nc:cityid/3],[tacoma_wa:cityid/3],[parma_oh:cityid/3],[allentown_pa:cityid/3],[provo_ut:cityid/3],[upper darby_pa:cityid/3],[spokane_wa:cityid/3],[daly city_ca:cityid/3],[salinas_ca:cityid/3],[norwalk_ca:cityid/3],[roanoke_va:cityid/3],[arlington_va:cityid/3],[pasadena_ca:cityid/3],[port arthur_tx:cityid/3],[brookside_de:cityid/3],[newton_ma:cityid/3],[glendale_az:cityid/3],[san antonio_tx:cityid/3],[syracuse_ny:cityid/3],[tyler_tx:cityid/3],[rochester_ny:cityid/3],[new britain_ct:cityid/3],[escondido_ca:cityid/3],[toledo_oh:cityid/3],[elgin_il:cityid/3],[cambridge_ma:cityid/3],[lower merion_pa:cityid/3],[irondequoit_ny:cityid/3],[norman_ok:cityid/3],[pittsburgh_pa:cityid/3],[portland_me:cityid/3],[wahiawa_hi:cityid/3],[shreveport_la:cityid/3],[burlington_vt:cityid/3],[taylor_mi:cityid/3],[albany_ga:cityid/3],[hamilton_oh:cityid/3],[huntington beach_ca:cityid/3],[saginaw_mi:cityid/3],[fairbanks_ak:cityid/3],[kenner_la:cityid/3],[parkersburg_wv:cityid/3],[canton_oh:cityid/3]} | answer(A,largest(B,(city(A),loc(B,C),const(C,stateid(alaska)))))
+        Example tmp2ksr3mg9.dlog:143: query => {[utah:stateid/2],[wyoming:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[kansas:stateid/2],[nebraska:stateid/2],[arizona:stateid/2]} | answer(A,(state(A),next_to(A,B),const(B,C),const(C,stateid(colorado))))
+        Example tmp2ksr3mg9.dlog:144: query => {} | answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:146: query => {[0count]} | answer(A,count(B,(major(B),city(B),loc(B,C),const(C,stateid(alaska))),A))
+        Example tmp2ksr3mg9.dlog:147: query => {[new jersey:stateid/2],[new york:stateid/2],[vermont:stateid/2],[delaware:stateid/2],[iowa:stateid/2],[wisconsin:stateid/2],[nevada:stateid/2],[kentucky:stateid/2],[utah:stateid/2],[massachusetts:stateid/2],[oregon:stateid/2],[virginia:stateid/2],[indiana:stateid/2],[new hampshire:stateid/2],[south dakota:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[rhode island:stateid/2],[maine:stateid/2],[idaho:stateid/2],[colorado:stateid/2],[district of columbia:stateid/2],[louisiana:stateid/2],[alabama:stateid/2],[north dakota:stateid/2],[wyoming:stateid/2],[pennsylvania:stateid/2],[georgia:stateid/2],[michigan:stateid/2],[missouri:stateid/2],[texas:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[south carolina:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[arkansas:stateid/2],[alaska:stateid/2],[washington:stateid/2],[connecticut:stateid/2],[kansas:stateid/2],[california:stateid/2],[nebraska:stateid/2],[ohio:stateid/2],[north carolina:stateid/2],[florida:stateid/2],[west virginia:stateid/2],[hawaii:stateid/2],[montana:stateid/2],[maryland:stateid/2],[arizona:stateid/2]} | answer(A,largest(B,(state(A),const(B,stateid(alaska)))))
+        Example FAILED TO PARSE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:149: query => {[anchorage_ak:cityid/3]} | answer(A,largest(A,(city(A),loc(A,B),const(B,stateid(alaska)))))
+        Example tmp2ksr3mg9.dlog:150: query => {[new jersey:stateid/2],[new york:stateid/2],[vermont:stateid/2],[delaware:stateid/2],[iowa:stateid/2],[wisconsin:stateid/2],[nevada:stateid/2],[kentucky:stateid/2],[utah:stateid/2],[massachusetts:stateid/2],[oregon:stateid/2],[virginia:stateid/2],[indiana:stateid/2],[new hampshire:stateid/2],[south dakota:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[rhode island:stateid/2],[maine:stateid/2],[idaho:stateid/2],[colorado:stateid/2],[district of columbia:stateid/2],[louisiana:stateid/2],[alabama:stateid/2],[north dakota:stateid/2],[wyoming:stateid/2],[pennsylvania:stateid/2],[georgia:stateid/2],[michigan:stateid/2],[missouri:stateid/2],[texas:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[south carolina:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[arkansas:stateid/2],[alaska:stateid/2],[washington:stateid/2],[connecticut:stateid/2],[kansas:stateid/2],[california:stateid/2],[nebraska:stateid/2],[ohio:stateid/2],[north carolina:stateid/2],[florida:stateid/2],[west virginia:stateid/2],[hawaii:stateid/2],[montana:stateid/2],[maryland:stateid/2],[arizona:stateid/2]} | answer(A,largest(B,(state(A),const(B,riverid(mississippi)))))
+        Example tmp2ksr3mg9.dlog:151: query => {[mount mckinley:placeid/2]} | answer(A,highest(A,(place(A),loc(A,B),const(B,stateid(alaska)))))
+        Example tmp2ksr3mg9.dlog:152: query => {} | answer(A,longest(A,(river(A),loc(A,B),const(B,stateid(alaska)))))
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:154: query => {[utah:stateid/2],[wyoming:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[kansas:stateid/2],[nebraska:stateid/2],[arizona:stateid/2]} | answer(A,(state(A),next_to(A,B),const(B,stateid(colorado))))
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:160: query => {[new jersey:stateid/2],[new york:stateid/2],[vermont:stateid/2],[delaware:stateid/2],[iowa:stateid/2],[wisconsin:stateid/2],[nevada:stateid/2],[kentucky:stateid/2],[utah:stateid/2],[massachusetts:stateid/2],[oregon:stateid/2],[virginia:stateid/2],[indiana:stateid/2],[new hampshire:stateid/2],[south dakota:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[rhode island:stateid/2],[maine:stateid/2],[idaho:stateid/2],[colorado:stateid/2],[district of columbia:stateid/2],[louisiana:stateid/2],[alabama:stateid/2],[north dakota:stateid/2],[wyoming:stateid/2],[pennsylvania:stateid/2],[georgia:stateid/2],[michigan:stateid/2],[missouri:stateid/2],[texas:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[south carolina:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[arkansas:stateid/2],[alaska:stateid/2],[washington:stateid/2],[connecticut:stateid/2],[kansas:stateid/2],[california:stateid/2],[nebraska:stateid/2],[ohio:stateid/2],[north carolina:stateid/2],[florida:stateid/2],[west virginia:stateid/2],[hawaii:stateid/2],[montana:stateid/2],[maryland:stateid/2],[arizona:stateid/2]} | answer(A,(state(A),const(B,riverid(mississippi)),river(B)))
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:163: query => {[new jersey:stateid/2],[new york:stateid/2],[vermont:stateid/2],[delaware:stateid/2],[iowa:stateid/2],[wisconsin:stateid/2],[nevada:stateid/2],[kentucky:stateid/2],[utah:stateid/2],[massachusetts:stateid/2],[oregon:stateid/2],[virginia:stateid/2],[indiana:stateid/2],[new hampshire:stateid/2],[south dakota:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[rhode island:stateid/2],[maine:stateid/2],[idaho:stateid/2],[colorado:stateid/2],[district of columbia:stateid/2],[louisiana:stateid/2],[alabama:stateid/2],[north dakota:stateid/2],[wyoming:stateid/2],[pennsylvania:stateid/2],[georgia:stateid/2],[michigan:stateid/2],[missouri:stateid/2],[texas:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[south carolina:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[arkansas:stateid/2],[alaska:stateid/2],[washington:stateid/2],[connecticut:stateid/2],[kansas:stateid/2],[california:stateid/2],[nebraska:stateid/2],[ohio:stateid/2],[north carolina:stateid/2],[florida:stateid/2],[west virginia:stateid/2],[hawaii:stateid/2],[montana:stateid/2],[maryland:stateid/2],[arizona:stateid/2]} | answer(A,largest(B,(state(A),const(B,stateid(alaska)))))
+        Example tmp2ksr3mg9.dlog:164: query => {[new york_ny:cityid/3]} | answer(A,largest(A,city(A)))
+        Example FAILED TO EXECUTE
+        Example FAILED TO PARSE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:167: query => {} | answer(A,longest(A,(river(A),loc(A,B),const(B,stateid(alaska)))))
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:169: query => {[california:stateid/2]} | answer(A,largest(B,(state(A),population(A,B))))
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:171: query => {[mount mckinley:placeid/2]} | answer(A,highest(A,(place(A),loc(A,B),const(B,stateid(alaska)))))
+        Example tmp2ksr3mg9.dlog:172: query => {[california:stateid/2]} | answer(A,largest(B,(state(A),population(A,B))))
+        Example tmp2ksr3mg9.dlog:173: query => {} | answer(A,(major(A),city(A),loc(A,B),const(B,stateid(alaska))))
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:176: query => {} | answer(A,(major(A),city(A),loc(A,B),const(B,stateid(alaska))))
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:180: query => {} | answer(A,(major(A),city(A),loc(A,B),const(B,stateid(alaska))))
+        Example tmp2ksr3mg9.dlog:181: query => {[utah:stateid/2],[wyoming:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[kansas:stateid/2],[nebraska:stateid/2],[arizona:stateid/2]} | answer(A,(state(A),next_to(A,B),const(B,stateid(colorado))))
+        Example FAILED TO EXECUTE
+        Example FAILED TO PARSE
+        Example tmp2ksr3mg9.dlog:183: query => {[mount mckinley:placeid/2]} | answer(A,highest(A,(place(A),loc(A,B),const(B,stateid(alaska)))))
+        Example tmp2ksr3mg9.dlog:184: query => {[new jersey:stateid/2],[new york:stateid/2],[vermont:stateid/2],[delaware:stateid/2],[iowa:stateid/2],[wisconsin:stateid/2],[nevada:stateid/2],[kentucky:stateid/2],[utah:stateid/2],[massachusetts:stateid/2],[oregon:stateid/2],[virginia:stateid/2],[indiana:stateid/2],[new hampshire:stateid/2],[south dakota:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[rhode island:stateid/2],[maine:stateid/2],[idaho:stateid/2],[colorado:stateid/2],[district of columbia:stateid/2],[louisiana:stateid/2],[alabama:stateid/2],[north dakota:stateid/2],[wyoming:stateid/2],[pennsylvania:stateid/2],[georgia:stateid/2],[michigan:stateid/2],[missouri:stateid/2],[texas:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[south carolina:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[arkansas:stateid/2],[alaska:stateid/2],[washington:stateid/2],[connecticut:stateid/2],[kansas:stateid/2],[california:stateid/2],[nebraska:stateid/2],[ohio:stateid/2],[north carolina:stateid/2],[florida:stateid/2],[west virginia:stateid/2],[hawaii:stateid/2],[montana:stateid/2],[maryland:stateid/2],[arizona:stateid/2]} | answer(A,largest(B,(state(A),const(B,stateid(alaska)))))
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:187: query => {} | answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))
+        Example tmp2ksr3mg9.dlog:188: query => {[pacific ocean:placeid/2]} | answer(A,lowest(A,(place(A),loc(A,B),const(B,stateid(alaska)))))
+        Example tmp2ksr3mg9.dlog:189: query => {[new jersey:stateid/2],[new york:stateid/2],[vermont:stateid/2],[delaware:stateid/2],[iowa:stateid/2],[wisconsin:stateid/2],[nevada:stateid/2],[kentucky:stateid/2],[utah:stateid/2],[massachusetts:stateid/2],[oregon:stateid/2],[virginia:stateid/2],[indiana:stateid/2],[new hampshire:stateid/2],[south dakota:stateid/2],[mississippi:stateid/2],[minnesota:stateid/2],[rhode island:stateid/2],[maine:stateid/2],[idaho:stateid/2],[colorado:stateid/2],[district of columbia:stateid/2],[louisiana:stateid/2],[alabama:stateid/2],[north dakota:stateid/2],[wyoming:stateid/2],[pennsylvania:stateid/2],[georgia:stateid/2],[michigan:stateid/2],[missouri:stateid/2],[texas:stateid/2],[illinois:stateid/2],[tennessee:stateid/2],[south carolina:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2],[arkansas:stateid/2],[alaska:stateid/2],[washington:stateid/2],[connecticut:stateid/2],[kansas:stateid/2],[california:stateid/2],[nebraska:stateid/2],[ohio:stateid/2],[north carolina:stateid/2],[florida:stateid/2],[west virginia:stateid/2],[hawaii:stateid/2],[montana:stateid/2],[maryland:stateid/2],[arizona:stateid/2]} | answer(A,(state(A),const(B,riverid(mississippi)),river(B)))
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:192: query => {} | answer(A,(major(A),city(A),loc(A,B),const(B,stateid(alaska))))
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:194: query => {[california:stateid/2]} | answer(A,largest(B,(state(A),population(A,B))))
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example FAILED TO PARSE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:198: query => {[iliamna:lakeid/2],[becharof:lakeid/2],[teshekpuk:lakeid/2],[naknek:lakeid/2]} | answer(A,(major(A),loc(A,B),const(B,stateid(alaska))))
+        Example tmp2ksr3mg9.dlog:199: query => {[sitka_ak:cityid/3],[fairbanks_ak:cityid/3],[anchorage_ak:cityid/3],[juneau_ak:cityid/3]} | answer(A,(city(A),loc(A,B),const(B,stateid(alaska))))
+        Example tmp2ksr3mg9.dlog:200: query => {[3count]} | answer(A,count(B,(major(B),next_to(B,C),const(C,stateid(colorado))),A))
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:202: query => {[arkansas:stateid/2],[louisiana:stateid/2],[new mexico:stateid/2],[oklahoma:stateid/2]} | answer(A,largest(B,(state(A),next_to(B,A),next_to(B,A))))
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:204: query => {[sitka_ak:cityid/3],[fairbanks_ak:cityid/3],[anchorage_ak:cityid/3],[juneau_ak:cityid/3]} | answer(A,(city(A),loc(A,B),const(B,stateid(alaska))))
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:206: query => {[juneau_ak:cityid/3]} | answer(A,(capital(A),loc(A,B),const(B,stateid(alaska))))
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:208: query => {[juneau_ak:cityid/3]} | answer(A,(capital(A),loc(A,B),const(B,stateid(alaska))))
+        Example tmp2ksr3mg9.dlog:209: query => {[juneau_ak:cityid/3]} | answer(A,(capital(A),loc(A,B),const(B,stateid(alaska))))
+        Example tmp2ksr3mg9.dlog:210: query => {[juneau_ak:cityid/3]} | answer(A,(capital(A),loc(A,B),const(B,stateid(alaska))))
+        Example tmp2ksr3mg9.dlog:211: query => {} | answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example FAILED TO PARSE
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:217: query => {[missouri:riverid/2]} | answer(A,longest(A,river(A)))
+        Example tmp2ksr3mg9.dlog:218: query => {[alaska:stateid/2]} | answer(A,largest(A,state(A)))
+        Example tmp2ksr3mg9.dlog:219: query => {} | answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:221: query => {[alaska:stateid/2]} | answer(A,largest(A,state(A)))
+        Example tmp2ksr3mg9.dlog:222: query => {} | answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))
+        Example tmp2ksr3mg9.dlog:223: query => {} | answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))
+        Example tmp2ksr3mg9.dlog:224: query => {} | answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))
+        Example tmp2ksr3mg9.dlog:225: query => {} | answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+        Example tmp2ksr3mg9.dlog:228: query => {} | answer(A,(state(A),next_to(A,B),const(B,stateid(alaska))))
+        Example FAILED TO EXECUTE
+        Example FAILED TO EXECUTE
+      } [1.1s, cum. 3.0s]
+    } [3.0s, cum. 3.0s]
+    Randomly splitting 177 general examples
+    124 training examples, 53 test examples
+  } [3.0s, cum. 3.1s]
+  Execution directory: /home/vikram/NLP-/proj2/state/execs/20.exec
+} [3.1s]
