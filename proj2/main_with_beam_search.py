@@ -82,21 +82,27 @@ class NearestNeighborSemanticParser(object):
         # exit(0)
         return test_derivs
 
+def softmax(x):
+    e_x = np.exp(x)
+    return e_x / e_x.sum(axis=0) 
 
 class Seq2SeqSemanticParser(object):
-    def __init__(self, input_embedding_layer, encoder, decoder, output_indexer):
+    def __init__(self, input_embedding_layer, encoder, decoder, output_indexer,\
+     beam_size=3):
         # raise Exception("implement me!")
         # Add any args you need here
         self.input_embedding_layer = input_embedding_layer
         self.encoder = encoder
         self.decoder = decoder
         self.output_indexer = output_indexer
+        self.beam_size = beam_size
 
     def decode(self, test_data: List[Example]) -> List[List[Derivation]]:
 
         # raise Exception("implement me!")
         ans  = []
-        for i, ex in enumerate(test_data):
+        
+        for ii, ex in enumerate(test_data):
             pred_tokens = []
             input_batch = np.array([ex.x_indexed])
             inp_lens = np.sum(input_batch!=0, axis=1)
@@ -111,20 +117,60 @@ class Seq2SeqSemanticParser(object):
             context = torch.zeros(1, 1, self.decoder.hid_dim)
             token = "<SOS>"
             count  = 0
-            while token != "<EOS>" and count<70:
-                count += 1
-                output, hidden, cell, context = self.decoder(input, \
-                hidden, cell, context, all_enc_output)
-                top1 = output.argmax(1) 
-                input = top1
-                # print(input.item())
-                token = output_indexer.get_object(input.item())
-                prob = output.max().item()
-                if token != "<EOS>":
-                    pred_tokens.append(token)
-            ans.append([Derivation(ex, 1.0, pred_tokens)])
 
-            print("{}/{} done".format(i+1, len(test_data)))
+            final_beam = Beam(self.beam_size)
+
+            all_beams = [Beam(self.beam_size) for x in range(70)]
+            all_beams[0].add(elt = (pred_tokens, input, context,"<SOS>", hidden, cell), score = 0.0)
+
+
+            while count<69:
+                
+                for beam_element, score in all_beams[count].get_elts_and_scores():
+
+                    pred_tokens, input, context, prev_token, hidden, cell = beam_element
+
+                    if(prev_token == "<EOS>"):
+                        final_beam.add(beam_element, score)
+                        continue
+
+                    output, hidden, cell, context = self.decoder(input, \
+                    hidden, cell, context, all_enc_output)
+                    output = output.squeeze().data.numpy()
+                    output = softmax(output)
+                    top_indices = output.argsort()
+                    top_indices = top_indices[::-1]
+
+                    for index in range(self.beam_size):
+                        # top1 = output.argmax(1) 
+                        i = top_indices[index]
+                        input = torch.tensor([i]).long()
+                        token = output_indexer.get_object(i)
+                        prob = output[i]
+                        
+                        new_pred_list = pred_tokens.copy()
+                        if token != "<EOS>":
+                            new_pred_list.append(token)
+
+                        all_beams[count+1].add(elt= (new_pred_list,\
+                         input, context, token, hidden, cell), score = (score*(count)+prob)/(count+1.0))
+                
+                # for beam_elt, score in all_beams[count+1].get_elts_and_scores():
+                #     print(beam_elt[0])
+                
+                # print('-----------------------------------------------')
+
+
+                count += 1
+            sub_ans = []
+            # exit(0)
+            for beam_elt, score in final_beam.get_elts_and_scores():
+                sub_ans.append(Derivation(ex, 1.0, beam_elt[0]))
+                # print(beam_elt[0])
+                # break
+            ans.append(sub_ans)
+
+            # print("{}/{} done".format(ii+1, len(test_data)))
         
         return ans
             
@@ -194,7 +240,7 @@ def encode_input_for_decoder(x_tensor, inp_lens_tensor, model_input_emb:
     return (enc_output_each_word, enc_context_mask, enc_final_states_reshaped)
 
 
-def train_model_encdec(train_data: List[Example], test_data: List[Example], input_indexer, output_indexer, args) -> Seq2SeqSemanticParser:
+def train_model_encdec(train_data: List[Example], test_data: List[Example], input_indexer, output_indexer, load_epoch, args) -> Seq2SeqSemanticParser:
     """
     Function to train the encoder-decoder model on the given data.
     :param train_data:
@@ -217,9 +263,9 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
     all_train_output_data = make_padded_output_tensor(train_data, output_indexer, output_max_len)
     all_test_output_data = make_padded_output_tensor(test_data, output_indexer, output_max_len)
 
-    print("Train length: %i" % input_max_len)
-    print("Train output length: %i" % np.max(np.asarray([len(ex.y_indexed) for ex in train_data])))
-    print("Train matrix: %s; shape = %s" % (all_train_input_data, all_train_input_data.shape))
+    # print("Train length: %i" % input_max_len)
+    # print("Train output length: %i" % np.max(np.asarray([len(ex.y_indexed) for ex in train_data])))
+    # print("Train matrix: %s; shape = %s" % (all_train_input_data, all_train_input_data.shape))
 
     # First create a model. Then loop over epochs, loop over examples, and given some indexed words, call
     # the encoder, call your decoder, accumulate losses, update parameters
@@ -229,106 +275,10 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
     output_vocab_size = len(output_indexer)
 
     do_training = False
-
-    if do_training:
-    #Model
-        input_embedding_size = 300
-        output_embedding_size = 300
-        encoder_hidden_size = 200
-        decoder_hidden_size = 200
-        input_embedding_layer = EmbeddingLayer(input_embedding_size, input_vocab_size, 0)
-        encoder =  RNNEncoder(input_embedding_size, encoder_hidden_size)
-        decoder = AttentionDecoder(output_vocab_size, output_embedding_size, decoder_hidden_size)
-        # load_epoch = 30
-        # input_embedding_layer = torch.load("models_big/{}.embed".format(load_epoch))
-        # encoder = torch.load("models_big/{}.encoder".format(load_epoch))
-        # decoder = torch.load("models_big/{}.decoder".format(load_epoch))
-
-        #Optimizer
-        optimizer = optim.Adam(list(input_embedding_layer.parameters())\
-        + list(encoder.parameters()) + list(decoder.parameters()))
-
-
-        criterion = nn.CrossEntropyLoss(ignore_index = 0)
-
-        
-        #Hyper-params
-        batch_size = 1
-        num_epochs = 40
-        teacher_forcing_ratio  = 0.5
-
-        print("SOS index : ",output_indexer.index_of("<SOS>"))
-        
-        
-        for epoch in range(num_epochs):
-            total_loss = 0
-            total_count = 0
-            cursor = batch_size
-            # teacher_forcing_ratio *= 0.9
-            while cursor < len(all_train_input_data):
-
-                optimizer.zero_grad()
-
-                input_batch = all_train_input_data[cursor-batch_size: cursor]
-                output_batch = all_train_output_data[cursor-batch_size: cursor]
-                inp_lens = np.sum(input_batch!=0, axis=1)
-
-                x_tensor = torch.from_numpy(input_batch).long()
-                inp_lens_tensor = torch.from_numpy(inp_lens).long()
-                out_tensor = torch.from_numpy(output_batch).long()
-
-                # print(out)
-
-                enc_all_output, _, enc_output = encode_input_for_decoder(x_tensor, inp_lens_tensor, input_embedding_layer,\
-                encoder)
-
-                # print(type(enc_all_output))
-                # print(enc_all_output.shape)
-                # exit(0)
-
-
-                hidden, cell = enc_output
-
-                outputs = torch.zeros(output_max_len, batch_size, output_vocab_size)
-                input = torch.ones((batch_size)).long()
-                context = torch.zeros(1, batch_size, decoder.hid_dim)
-                loss = 0
-                for t in range(0, output_max_len):
-                
-                    #insert input token embedding, previous hidden and previous cell states
-                    #receive output tensor (predictions) and new hidden and cell states
-                    output, hidden, cell, context = decoder(input, hidden, cell, context,\
-                    enc_all_output)
-                    
-                    #place predictions in a tensor holding predictions for each token
-                    outputs[t] = output
-
-                    loss += criterion(output, out_tensor[:,t])
-                    teacher_force = random.random() < teacher_forcing_ratio
-                    
-                    #get the highest predicted token from our predictions
-                    top1 = output.data.argmax(1) 
-                    token = output_indexer.get_object(top1.item())
-                    if token == "<EOS>":
-                       break
-
-                    input = out_tensor[:,t] if teacher_force else top1
-
-                loss.backward()
-                optimizer.step()
-                total_loss += loss.item()
-                total_count += 1
-                cursor += batch_size
-            print("loss at epoch {}: {}".format(epoch, total_loss/total_count)) 
-            torch.save(input_embedding_layer, "models_fresh/{}.embed".format(epoch))
-            torch.save(encoder, "models_fresh/{}.encoder".format(epoch))
-            torch.save(decoder, "models_fresh/{}.decoder".format(epoch))
-    else:
-        load_epoch = 38
-        input_embedding_layer = torch.load("models_fresh/{}.embed".format(load_epoch))
-        encoder = torch.load("models_fresh/{}.encoder".format(load_epoch))
-        decoder = torch.load("models_fresh/{}.decoder".format(load_epoch))
-
+    # load_epoch = 15
+    input_embedding_layer = torch.load("models_fresh/{}.embed".format(load_epoch))
+    encoder = torch.load("models_fresh/{}.encoder".format(load_epoch))
+    decoder = torch.load("models_fresh/{}.decoder".format(load_epoch))
     
     return Seq2SeqSemanticParser(input_embedding_layer, encoder, decoder, output_indexer)
 
@@ -364,13 +314,16 @@ def evaluate(test_data: List[Example], decoder, example_freq=50, print_output=Tr
         denotation_correct = [False for derivs in pred_derivations]
     else:
         selected_derivs, denotation_correct = e.compare_answers([ex.y for ex in test_data], pred_derivations, quiet=True)
-    print_evaluation_results(test_data, selected_derivs, denotation_correct, example_freq, print_output)
+    t, r = print_evaluation_results(test_data, selected_derivs, denotation_correct, example_freq, print_output=False)
+    
     # Writes to the output file if needed
     if outfile is not None:
         with open(outfile, "w") as out:
             for i, ex in enumerate(test_data):
                 out.write(ex.x + "\t" + " ".join(selected_derivs[i].y_toks) + "\n")
         out.close()
+
+    return t,r
 
 
 if __name__ == '__main__':
@@ -392,9 +345,11 @@ if __name__ == '__main__':
         decoder = NearestNeighborSemanticParser(train_data_indexed)
         evaluate(dev_data_indexed, decoder)
     else:
-        decoder = train_model_encdec(train_data_indexed, dev_data_indexed, input_indexer, output_indexer, args)
-        evaluate(dev_data_indexed, decoder)
-    # exit(0)
+        for load_epoch in range(4, 40):
+            decoder = train_model_encdec(train_data_indexed, dev_data_indexed, input_indexer, output_indexer, load_epoch, args)
+            t, r = evaluate(dev_data_indexed, decoder)
+            print(load_epoch, t, r)
+    exit(0)
     print("=======FINAL EVALUATION ON BLIND TEST=======")
     evaluate(test_data_indexed, decoder, print_output=False, outfile="geo_test_output.tsv")
 

@@ -203,6 +203,8 @@ def print_evaluation_results(test_data, selected_derivs, denotation_correct, exa
         print("Exact logical form matches: %s" % (render_ratio(num_exact_match, len(test_data))))
         print("Token-level accuracy: %s" % (render_ratio(num_tokens_correct, total_tokens)))
         print("Denotation matches: %s" % (render_ratio(num_denotation_match, len(test_data))))
+    
+    return num_tokens_correct/total_tokens, num_denotation_match/len(test_data)
 
 
 def render_ratio(numer, denom):

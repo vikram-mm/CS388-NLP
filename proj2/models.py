@@ -191,11 +191,8 @@ class AttentionDecoder(nn.Module):
         output, (hidden, cell) = self.rnn(rnn_input, (hidden, cell))
         
         attention_weights = self.compute_attention(output.squeeze(0), encoder_outputs)
-
-        
-        context = attention_weights.bmm(encoder_outputs.transpose(0, 1)) # [-1, 1, hidden_size]
-        context = context.transpose(0, 1) # [1, -1, hidden_size]
-
+        context = attention_weights.bmm(encoder_outputs.transpose(0, 1)) 
+        context = context.transpose(0, 1) 
         prediction = self.out(torch.cat((output, context), 2).squeeze(0))
         
         return prediction, hidden, cell, context

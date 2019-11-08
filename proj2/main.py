@@ -276,22 +276,11 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
             input = torch.ones((batch_size)).long()
 
             for t in range(0, output_max_len):
-            
-                #insert input token embedding, previous hidden and previous cell states
-                #receive output tensor (predictions) and new hidden and cell states
+
                 output, hidden, cell = decoder(input, hidden, cell)
-                
-                #place predictions in a tensor holding predictions for each token
                 outputs[t] = output
-                
-                #decide if we are going to use teacher forcing or not
                 teacher_force = random.random() < teacher_forcing_ratio
-                
-                #get the highest predicted token from our predictions
                 top1 = output.argmax(1) 
-                
-                #if teacher forcing, use actual next token as next input
-                #if not, use predicted token
                 input = out_tensor[:,t] if teacher_force else top1
 
             outputs.transpose_(0,1)
