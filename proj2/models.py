@@ -134,35 +134,68 @@ class Decoder(nn.Module):
         
     def forward(self, input, hidden, cell):
         
-        #input = [batch size]
-        #hidden = [n layers * n directions, batch size, hid dim]
-        #cell = [n layers * n directions, batch size, hid dim]
-        
-        #n directions in the decoder will both always be 1, therefore:
-        #hidden = [n layers, batch size, hid dim]
-        #context = [n layers, batch size, hid dim]
-        
+
         input = input.unsqueeze(0)
         
-        #input = [1, batch size]
-        
         embedded = self.dropout(self.embedding(input))
-        
-        #embedded = [1, batch size, emb dim]
-                
         output, (hidden, cell) = self.rnn(embedded, (hidden, cell))
-        
-        #output = [sent len, batch size, hid dim * n directions]
-        #hidden = [n layers * n directions, batch size, hid dim]
-        #cell = [n layers * n directions, batch size, hid dim]
-        
-        #sent len and n directions will always be 1 in the decoder, therefore:
-        #output = [1, batch size, hid dim]
-        #hidden = [n layers, batch size, hid dim]
-        #cell = [n layers, batch size, hid dim]
-        
         prediction = self.out(output.squeeze(0))
         
         #prediction = [batch size, output dim]
         
         return prediction, hidden, cell
+
+class AttentionDecoder(nn.Module):
+    '''
+    using general attention
+    '''
+    def __init__(self, output_dim, emb_dim, hid_dim, n_layers=1, dropout=0):
+        super().__init__()
+        
+        self.output_dim = output_dim
+        self.hid_dim = hid_dim
+        self.n_layers = n_layers
+        
+        self.embedding = nn.Embedding(output_dim, emb_dim)
+        #attention layer
+        self.attention = nn.Linear(self.hid_dim, self.hid_dim)
+        self.rnn = nn.LSTM(emb_dim+hid_dim, hid_dim, n_layers, dropout = dropout)
+        
+        self.out = nn.Linear(hid_dim*2, output_dim) #both hidden\
+        # state and context are input 
+        
+        self.dropout = nn.Dropout(dropout)
+
+    
+    def compute_attention(self, hidden, encoder_outputs):
+        batch_size, hidden_size = hidden.size()
+        enc_len, batch_size, _ = encoder_outputs.size()
+        energies = torch.zeros(batch_size, enc_len)
+        for bi in range(batch_size):
+            for li in range(enc_len):
+                energy = self.attention(encoder_outputs[li, bi, :])
+                energy = hidden[bi].view(-1).dot(energy.view(-1))
+                energies[bi, li] = energy
+        return torch.nn.functional.softmax(energies, dim=0).unsqueeze(1)
+
+
+        
+    def forward(self, input, hidden, cell, decoder_context, encoder_outputs):
+
+        
+        input = input.unsqueeze(0)
+        
+        embedded = self.dropout(self.embedding(input))
+ 
+        rnn_input = torch.cat((embedded, decoder_context), 2)
+        output, (hidden, cell) = self.rnn(rnn_input, (hidden, cell))
+        
+        attention_weights = self.compute_attention(output.squeeze(0), encoder_outputs)
+
+        
+        context = attention_weights.bmm(encoder_outputs.transpose(0, 1)) # [-1, 1, hidden_size]
+        context = context.transpose(0, 1) # [1, -1, hidden_size]
+
+        prediction = self.out(torch.cat((output, context), 2).squeeze(0))
+        
+        return prediction, hidden, cell, context
