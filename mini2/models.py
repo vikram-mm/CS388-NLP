@@ -255,7 +255,7 @@ def train_evaluate_fancy(train_exs: List[SentimentExample], dev_exs: List[Sentim
 
     #Hyper-parameters
     num_epochs = 10
-    lstm_hiiden_dim = 16
+    lstm_hiiden_dim = 64
     batch_size = 32
     lr = 0.01
 
@@ -294,7 +294,6 @@ def train_evaluate_fancy(train_exs: List[SentimentExample], dev_exs: List[Sentim
         print("loss at epoch {}: {}".format(epoch, total_loss/total_count))
         dev_pred = np.argmax(model(dev_embeddings, dev_seq_len).data.numpy(), axis=1)
         dev_acc = np.sum(dev_pred == dev_labels_arr)/len(dev_labels_arr)
-
         print("dev acc: {}".format(dev_acc))
 
         if dev_acc > best_dev_acc:
@@ -305,6 +304,9 @@ def train_evaluate_fancy(train_exs: List[SentimentExample], dev_exs: List[Sentim
     print("loading best model")
     model = torch.load("best.model")
     # model.prev_hidden = None
+    dev_pred = np.argmax(model(dev_embeddings, dev_seq_len).data.numpy(), axis=1)
+    dev_acc = np.sum(dev_pred == dev_labels_arr)/len(dev_labels_arr)
+    print("dev acc: {}".format(dev_acc))
     test_pred = np.argmax(model(test_embeddings, test_seq_len).data.numpy(), axis=1)
 
     for i in range(len(test_exs)):

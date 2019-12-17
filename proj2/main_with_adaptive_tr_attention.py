@@ -82,7 +82,10 @@ class NearestNeighborSemanticParser(object):
         # exit(0)
         return test_derivs
 
-
+def softmax(x):
+    e_x = np.exp(x)
+    return e_x / e_x.sum(axis=0) 
+    
 class Seq2SeqSemanticParser(object):
     def __init__(self, input_embedding_layer, encoder, decoder, output_indexer):
         # raise Exception("implement me!")
@@ -91,12 +94,14 @@ class Seq2SeqSemanticParser(object):
         self.encoder = encoder
         self.decoder = decoder
         self.output_indexer = output_indexer
+        self.beam_size = 5
 
     def decode(self, test_data: List[Example]) -> List[List[Derivation]]:
 
         # raise Exception("implement me!")
         ans  = []
-        for i, ex in enumerate(test_data):
+        
+        for ii, ex in enumerate(test_data):
             pred_tokens = []
             input_batch = np.array([ex.x_indexed])
             inp_lens = np.sum(input_batch!=0, axis=1)
@@ -111,20 +116,60 @@ class Seq2SeqSemanticParser(object):
             context = torch.zeros(1, 1, self.decoder.hid_dim)
             token = "<SOS>"
             count  = 0
-            while token != "<EOS>" and count<70:
-                count += 1
-                output, hidden, cell, context = self.decoder(input, \
-                hidden, cell, context, all_enc_output)
-                top1 = output.argmax(1) 
-                input = top1
-                # print(input.item())
-                token = output_indexer.get_object(input.item())
-                prob = output.max().item()
-                if token != "<EOS>":
-                    pred_tokens.append(token)
-            ans.append([Derivation(ex, 1.0, pred_tokens)])
 
-            print("{}/{} done".format(i+1, len(test_data)))
+            final_beam = Beam(self.beam_size)
+
+            all_beams = [Beam(self.beam_size) for x in range(70)]
+            all_beams[0].add(elt = (pred_tokens, input, context,"<SOS>", hidden, cell), score = 0.0)
+
+
+            while count<69:
+                
+                for beam_element, score in all_beams[count].get_elts_and_scores():
+
+                    pred_tokens, input, context, prev_token, hidden, cell = beam_element
+
+                    if(prev_token == "<EOS>"):
+                        final_beam.add(beam_element, score)
+                        continue
+
+                    output, hidden, cell, context = self.decoder(input, \
+                    hidden, cell, context, all_enc_output)
+                    output = output.squeeze().data.numpy()
+                    output = softmax(output)
+                    top_indices = output.argsort()
+                    top_indices = top_indices[::-1]
+
+                    for index in range(self.beam_size):
+                        # top1 = output.argmax(1) 
+                        i = top_indices[index]
+                        input = torch.tensor([i]).long()
+                        token = output_indexer.get_object(i)
+                        prob = output[i]
+                        
+                        new_pred_list = pred_tokens.copy()
+                        if token != "<EOS>":
+                            new_pred_list.append(token)
+
+                        all_beams[count+1].add(elt= (new_pred_list,\
+                         input, context, token, hidden, cell), score = (score*(count)+prob)/(count+1.0))
+                
+                # for beam_elt, score in all_beams[count+1].get_elts_and_scores():
+                #     print(beam_elt[0])
+                
+                # print('-----------------------------------------------')
+
+
+                count += 1
+            sub_ans = []
+            # exit(0)
+            for beam_elt, score in final_beam.get_elts_and_scores():
+                sub_ans.append(Derivation(ex, 1.0, beam_elt[0]))
+                # print(beam_elt[0])
+                # break
+            ans.append(sub_ans)
+
+            # print("{}/{} done".format(ii+1, len(test_data)))
         
         return ans
             
@@ -256,6 +301,8 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
         batch_size = 1
         num_epochs = 40
         teacher_forcing_ratio  = 0.5
+        epsilon  = 0.01
+        prev_losses = [1000, 900, 800, 700]
 
         print("SOS index : ",output_indexer.index_of("<SOS>"))
         
@@ -305,6 +352,12 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
 
                     loss += criterion(output, out_tensor[:,t])
 
+                    if loss < np.mean(prev_losses):
+                        teacher_forcing_ratio -= epsilon
+                    else:
+                        teacher_forcing_ratio += epsilon
+
+                    prev_losses = prev_losses[1:] + [loss.item()]
 
                     teacher_force = random.random() < teacher_forcing_ratio
                     
@@ -321,6 +374,7 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
                 total_loss += loss.item()
                 total_count += 1
                 cursor += batch_size
+            print(prev_losses)
             print("loss at epoch {}: {}".format(epoch, total_loss/total_count)) 
             torch.save(input_embedding_layer, "models_fast/{}.embed".format(epoch))
             torch.save(encoder, "models_fast/{}.encoder".format(epoch))
@@ -331,7 +385,6 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
         encoder = torch.load("models_fast/{}.encoder".format(load_epoch))
         decoder = torch.load("models_fast/{}.decoder".format(load_epoch))
 
-    
     return Seq2SeqSemanticParser(input_embedding_layer, encoder, decoder, output_indexer)
 
     # raise Exception("Implement the rest of me to train your encoder-decoder model")

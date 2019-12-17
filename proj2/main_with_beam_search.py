@@ -88,7 +88,7 @@ def softmax(x):
 
 class Seq2SeqSemanticParser(object):
     def __init__(self, input_embedding_layer, encoder, decoder, output_indexer,\
-     beam_size=3):
+     beam_size=4):
         # raise Exception("implement me!")
         # Add any args you need here
         self.input_embedding_layer = input_embedding_layer
@@ -173,6 +173,43 @@ class Seq2SeqSemanticParser(object):
             # print("{}/{} done".format(ii+1, len(test_data)))
         
         return ans
+    # def decode(self, test_data: List[Example]) -> List[List[Derivation]]:
+
+    #     # raise Exception("implement me!")
+    #     ans  = []
+    #     for i, ex in enumerate(test_data):
+    #         pred_tokens = []
+    #         input_batch = np.array([ex.x_indexed])
+    #         inp_lens = np.sum(input_batch!=0, axis=1)
+    #         x_tensor = torch.from_numpy(input_batch).long()
+    #         inp_lens_tensor = torch.from_numpy(inp_lens).long()
+    #         all_enc_output, _, enc_output = encode_input_for_decoder(x_tensor,\
+    #          inp_lens_tensor, self.input_embedding_layer,\
+    #         self.encoder)
+            
+    #         hidden, cell = enc_output
+    #         input = torch.ones((1)).long()
+    #         context = torch.zeros(1, 1, self.decoder.hid_dim)
+    #         token = "<SOS>"
+    #         count  = 0
+    #         while token != "<EOS>" and count<70:
+    #             count += 1
+    #             output, hidden, cell, context = self.decoder(input, \
+    #             hidden, cell, context, all_enc_output)
+    #             top1 = output.argmax(1) 
+    #             input = top1
+    #             # print(input.item())
+    #             token = output_indexer.get_object(input.item())
+    #             prob = output.max().item()
+    #             if token != "<EOS>":
+    #                 pred_tokens.append(token)
+    #         ans.append([Derivation(ex, 1.0, pred_tokens)])
+
+    #         # print("{}/{} done".format(i+1, len(test_data)))
+        
+    #     return ans
+            
+
             
 
             
@@ -276,9 +313,9 @@ def train_model_encdec(train_data: List[Example], test_data: List[Example], inpu
 
     do_training = False
     # load_epoch = 15
-    input_embedding_layer = torch.load("models_fresh/{}.embed".format(load_epoch))
-    encoder = torch.load("models_fresh/{}.encoder".format(load_epoch))
-    decoder = torch.load("models_fresh/{}.decoder".format(load_epoch))
+    input_embedding_layer = torch.load("models_fast/{}.embed".format(load_epoch))
+    encoder = torch.load("models_fast/{}.encoder".format(load_epoch))
+    decoder = torch.load("models_fast/{}.decoder".format(load_epoch))
     
     return Seq2SeqSemanticParser(input_embedding_layer, encoder, decoder, output_indexer)
 
@@ -314,7 +351,7 @@ def evaluate(test_data: List[Example], decoder, example_freq=50, print_output=Tr
         denotation_correct = [False for derivs in pred_derivations]
     else:
         selected_derivs, denotation_correct = e.compare_answers([ex.y for ex in test_data], pred_derivations, quiet=True)
-    t, r = print_evaluation_results(test_data, selected_derivs, denotation_correct, example_freq, print_output=False)
+    t, r = print_evaluation_results(test_data, selected_derivs, denotation_correct, example_freq, print_output=True)
     
     # Writes to the output file if needed
     if outfile is not None:
@@ -333,6 +370,9 @@ if __name__ == '__main__':
     np.random.seed(args.seed)
     # Load the training and test data
 
+   
+    
+
     train, dev, test = load_datasets(args.train_path, args.dev_path, args.test_path, domain=args.domain)
     train_data_indexed, dev_data_indexed, test_data_indexed, input_indexer, output_indexer = index_datasets(train, dev, test, args.decoder_len_limit)
     print("%i train exs, %i dev exs, %i input types, %i output types" % (len(train_data_indexed), len(dev_data_indexed), len(input_indexer), len(output_indexer)))
@@ -345,11 +385,21 @@ if __name__ == '__main__':
         decoder = NearestNeighborSemanticParser(train_data_indexed)
         evaluate(dev_data_indexed, decoder)
     else:
-        for load_epoch in range(4, 40):
-            decoder = train_model_encdec(train_data_indexed, dev_data_indexed, input_indexer, output_indexer, load_epoch, args)
-            t, r = evaluate(dev_data_indexed, decoder)
-            print(load_epoch, t, r)
-    exit(0)
+        # for load_epoch in range(4, 40):
+        #     decoder = train_model_encdec(train_data_indexed, dev_data_indexed, input_indexer, output_indexer, load_epoch, args)
+        #     t, r = evaluate(dev_data_indexed, decoder)
+        #     ans = "{},{},{}\n".format(load_epoch,t,r)
+        #     print(ans)
+        #     f = open("adaptive_train.csv", "a")
+        #     f.write(ans)
+        #     f.close()
+
+        load_epoch  = 31
+        decoder = train_model_encdec(train_data_indexed, dev_data_indexed, input_indexer, output_indexer, load_epoch, args)
+        t, r = evaluate(dev_data_indexed, decoder)
+
+    
+    # exit(0)
     print("=======FINAL EVALUATION ON BLIND TEST=======")
     evaluate(test_data_indexed, decoder, print_output=False, outfile="geo_test_output.tsv")
 
